@@ -8,7 +8,7 @@ import { readFile } from "fs/promises";
 async function bootstrap() {
 	const protoBufferPackages = JSON.parse(
 		(
-			await readFile(join(__dirname, "../protoBufferPackages.json"))
+			await readFile(join(process.cwd(), "protoBufferPackages.json"))
 		).toString(),
 	);
 
