@@ -23,7 +23,7 @@ async function bootstrap() {
 				onLoadPackageDefinition: (pkg, server) => {
 					new ReflectionService(pkg).addToServer(server);
 				},
-				url: "localhost:50051",
+				url: "0.0.0.0:50051",
 			},
 		},
 	);
