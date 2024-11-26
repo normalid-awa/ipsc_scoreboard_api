@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType()
 @Entity()
@@ -23,4 +23,11 @@ export class User {
 		//TODO: Implement password hashing
 		return rawPassword;
 	}
+
+	@Field(() => Date)
+	@CreateDateColumn()
+	createdAt: Date;
+
+	@Column({ default: false })
+	verified: boolean;
 }
