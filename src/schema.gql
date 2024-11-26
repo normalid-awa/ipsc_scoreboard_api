@@ -17,24 +17,14 @@ scalar DateTime
 type Query {
   user(id: Int!): User!
   users(skip: Int = 0, take: Int = 25): [User!]!
+  login(email: String!, password: String!): String!
+  whoami(token: String!): String!
 }
 
 type Mutation {
-  createUser(newUserData: NewUserInput!): User!
-  updateUser(id: Int!, newUserData: UpdateUserInput!): Boolean!
+  createUser(name: String!, email: String!, password: String!): User!
+  updateUser(id: Int!, name: String, email: String): Boolean!
   removeUser(id: Int!): Boolean!
-}
-
-input NewUserInput {
-  name: String!
-  email: String!
-  password: String!
-}
-
-input UpdateUserInput {
-  name: String
-  email: String
-  password: String
 }
 
 type Subscription {

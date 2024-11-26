@@ -1,12 +1,8 @@
 import { ArgsType, Field, Int } from "@nestjs/graphql";
 import { Max, Min } from "class-validator";
 
-export interface DatabaseConfig {
-	port: number;
-	host: string;
-	user: string;
-	password: string;
-	database: string;
+export interface SecurityConfig {
+	jwtSecret: string;
 }
 
 export function CreatePaginationArgs(maxTake: number = 50) {

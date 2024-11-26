@@ -2,7 +2,7 @@ import { ArgsType, Field } from "@nestjs/graphql";
 import { User } from "./user.entity";
 import { CreatePaginationArgs } from "src/types";
 import { IsEmail, IsStrongPassword } from "class-validator";
-import { SecurityConfig } from "config/security.config";
+import securityConfig from "config/security.config";
 
 @ArgsType()
 export class NewUserArgs implements Pick<User, "name" | "email"> {
@@ -14,7 +14,7 @@ export class NewUserArgs implements Pick<User, "name" | "email"> {
 	email: string;
 
 	@Field()
-	@IsStrongPassword(SecurityConfig)
+	@IsStrongPassword(securityConfig)
 	password: string;
 }
 

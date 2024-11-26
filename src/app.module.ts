@@ -6,11 +6,14 @@ import { DatabaseConfig } from "config/database.config";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { join } from "path";
+import { AuthModule } from "./auth/auth.module";
+import securityConfig from "config/security.config";
+import { JwtModule } from "@nestjs/jwt";
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({
-			load: [() => DatabaseConfig],
+			load: [() => DatabaseConfig, () => securityConfig],
 		}),
 		TypeOrmModule.forRootAsync({
 			useFactory: () => DatabaseConfig,
@@ -23,7 +26,16 @@ import { join } from "path";
 				"graphql-ws": true,
 			},
 		}),
+		JwtModule.register({
+			...securityConfig,
+			global: true,
+			signOptions: {
+				expiresIn: "60s"
+			},
+			secret: securityConfig.jwtSecret,
+		}),
 		UsersModule,
+		AuthModule,
 	],
 })
 export class AppModule {}
