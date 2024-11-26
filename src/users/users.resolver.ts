@@ -9,7 +9,7 @@ import {
 	Subscription,
 } from "@nestjs/graphql";
 import { UsersService } from "./users.service";
-import { NewUserInput, UpdateUserInput, UserEvents, UsersArgs } from "./users.dto";
+import { NewUserArgs, UpdateUserArgs, UserEvents, UsersArgs } from "./users.dto";
 import { PubSub } from "graphql-subscriptions";
 
 const pubSub = new PubSub();
@@ -36,7 +36,7 @@ export class UsersResolver {
 
 	@Mutation(() => User)
 	async createUser(
-		@Args("newUserData") newUserData: NewUserInput,
+		@Args() newUserData: NewUserArgs,
 	): Promise<User> {
 		const user = await this.usersService.create(newUserData);
 		pubSub.publish(UserEvents.USER_CREATED, { userAdded: user });
@@ -46,7 +46,7 @@ export class UsersResolver {
 	@Mutation(() => Boolean)
 	async updateUser(
 		@Args("id", { type: () => Int }) id: number,
-		@Args("newUserData") newUserData: UpdateUserInput,
+		@Args() newUserData: UpdateUserArgs,
 	): Promise<boolean> {
 		const user = await this.usersService.update(id, newUserData);
 		if (user) {

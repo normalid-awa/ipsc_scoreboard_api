@@ -1,10 +1,11 @@
-import { ArgsType, Field, InputType } from "@nestjs/graphql";
+import { ArgsType, Field } from "@nestjs/graphql";
 import { User } from "./user.entity";
 import { CreatePaginationArgs } from "src/types";
 import { IsEmail, IsStrongPassword } from "class-validator";
+import { SecurityConfig } from "config/security.config";
 
-@InputType()
-export class NewUserInput implements Pick<User, "name" | "email"> {
+@ArgsType()
+export class NewUserArgs implements Pick<User, "name" | "email"> {
 	@Field()
 	name: string;
 
@@ -13,21 +14,18 @@ export class NewUserInput implements Pick<User, "name" | "email"> {
 	email: string;
 
 	@Field()
-	@IsStrongPassword()
+	@IsStrongPassword(SecurityConfig)
 	password: string;
 }
 
-@InputType()
-export class UpdateUserInput implements Partial<NewUserInput> {
+@ArgsType()
+export class UpdateUserArgs implements Partial<NewUserArgs> {
 	@Field({ nullable: true })
 	name?: string;
 
 	@Field({ nullable: true })
 	@IsEmail()
 	email?: string;
-
-	@Field({ nullable: true })
-	password?: string;
 }
 
 @ArgsType()

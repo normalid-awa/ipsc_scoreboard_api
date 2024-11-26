@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { NewUserInput, UpdateUserInput, UsersArgs } from "./users.dto";
+import { NewUserArgs, UpdateUserArgs, UsersArgs } from "./users.dto";
 import { User } from "./user.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -11,7 +11,7 @@ export class UsersService {
 		private readonly userRepository: Repository<User>,
 	) {}
 
-	async create(data: NewUserInput): Promise<User> {
+	async create(data: NewUserArgs): Promise<User> {
 		return await this.userRepository.save({
 			name: data.name,
 			email: data.email,
@@ -30,13 +30,12 @@ export class UsersService {
 		});
 	}
 
-	async update(id: number, data: UpdateUserInput): Promise<boolean> {
+	async update(id: number, data: UpdateUserArgs): Promise<boolean> {
 		return (
 			(
 				await this.userRepository.update(id, {
 					email: data.email,
 					name: data.name,
-					hashedPassword: User.HashPassword(data.password),
 				})
 			).affected > 0
 		);
