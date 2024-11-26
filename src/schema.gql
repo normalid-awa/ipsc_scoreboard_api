@@ -18,7 +18,7 @@ type Query {
   user(id: Int!): User!
   users(skip: Int = 0, take: Int = 25): [User!]!
   login(email: String!, password: String!): String!
-  whoami(token: String!): String!
+  whoAmI: User!
 }
 
 type Mutation {

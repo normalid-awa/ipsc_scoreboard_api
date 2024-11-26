@@ -9,6 +9,7 @@ import { join } from "path";
 import { AuthModule } from "./auth/auth.module";
 import securityConfig from "config/security.config";
 import { JwtModule } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
 
 @Module({
 	imports: [
@@ -30,10 +31,11 @@ import { JwtModule } from "@nestjs/jwt";
 			...securityConfig,
 			global: true,
 			signOptions: {
-				expiresIn: "60s"
+				expiresIn: "60s",
 			},
 			secret: securityConfig.jwtSecret,
 		}),
+		PassportModule.register({ session: true }),
 		UsersModule,
 		AuthModule,
 	],

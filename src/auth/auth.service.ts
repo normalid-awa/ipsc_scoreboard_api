@@ -13,21 +13,16 @@ export class AuthService {
 		private readonly jwtService: JwtService,
 	) {}
 
-	async validateUser(
-		email: string,
-		password: string,
-	): Promise<Omit<User, "hashedPassword">> {
+	async validateUser(email: string, password: string): Promise<User> {
 		const user = await this.userRepository.findOne({
 			where: { email },
 		});
 
 		if (!user || User.HashPassword(password) !== user.hashedPassword) {
-			return null;
+			throw new UnauthorizedException();
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { hashedPassword, ...desensitiveData } = user;
-		return desensitiveData;
+		return user;
 	}
 
 	async login(credentials: LoginArgs) {
@@ -35,14 +30,7 @@ export class AuthService {
 			credentials.email,
 			credentials.password,
 		);
-		if (!user) {
-			throw new UnauthorizedException();
-		}
 		const payload = { sub: user.id };
 		return await this.jwtService.signAsync(payload);
-	}
-
-	async whoami(token: string) {
-		return JSON.stringify(await this.jwtService.decode(token));
 	}
 }
