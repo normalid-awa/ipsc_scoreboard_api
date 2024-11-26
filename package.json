@@ -36,6 +36,7 @@
 		"class-validator": "^0.14.1",
 		"cross-var": "^1.1.0",
 		"graphql": "^16.9.0",
+		"graphql-subscriptions": "^3.0.0",
 		"pg": "^8.13.1",
 		"pg-error-enum": "^0.7.3",
 		"reflect-metadata": "^0.2.0",

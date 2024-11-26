@@ -9,13 +9,14 @@ type User {
 }
 
 type Query {
-  user(id: String!): User!
+  user(id: Int!): User!
   users(skip: Int = 0, take: Int = 25): [User!]!
 }
 
 type Mutation {
   createUser(newUserData: NewUserInput!): User!
-  removeUser(id: String!): Boolean!
+  updateUser(id: Int!, newUserData: UpdateUserInput!): Boolean!
+  removeUser(id: Int!): Boolean!
 }
 
 input NewUserInput {
@@ -24,6 +25,14 @@ input NewUserInput {
   password: String!
 }
 
+input UpdateUserInput {
+  name: String
+  email: String
+  password: String
+}
+
 type Subscription {
   userAdded: User!
+  userUpdated: Int!
+  userRemoved: Int!
 }

@@ -1,8 +1,18 @@
 import { Logger, NotFoundException } from "@nestjs/common";
 import { User } from "./user.entity";
-import { Args, Mutation, Query, Resolver, Subscription } from "@nestjs/graphql";
+import {
+	Args,
+	Int,
+	Mutation,
+	Query,
+	Resolver,
+	Subscription,
+} from "@nestjs/graphql";
 import { UsersService } from "./users.service";
-import { NewUserInput, UsersArgs } from "./users.dto";
+import { NewUserInput, UpdateUserInput, UserEvents, UsersArgs } from "./users.dto";
+import { PubSub } from "graphql-subscriptions";
+
+const pubSub = new PubSub();
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -11,7 +21,7 @@ export class UsersResolver {
 	constructor(private readonly usersService: UsersService) {}
 
 	@Query(() => User)
-	async user(@Args("id") id: string): Promise<User> {
+	async user(@Args("id", { type: () => Int }) id: number): Promise<User> {
 		const recipe = await this.usersService.findOneById(id);
 		if (!recipe) {
 			throw new NotFoundException(id);
@@ -28,18 +38,45 @@ export class UsersResolver {
 	async createUser(
 		@Args("newUserData") newUserData: NewUserInput,
 	): Promise<User> {
-		const recipe = await this.usersService.create(newUserData);
-		// pubSub.publish("recipeAdded", { recipeAdded: recipe });
-		return recipe;
+		const user = await this.usersService.create(newUserData);
+		pubSub.publish(UserEvents.USER_CREATED, { userAdded: user });
+		return user;
 	}
 
 	@Mutation(() => Boolean)
-	async removeUser(@Args("id") id: string) {
-		return this.usersService.remove(id);
+	async updateUser(
+		@Args("id", { type: () => Int }) id: number,
+		@Args("newUserData") newUserData: UpdateUserInput,
+	): Promise<boolean> {
+		const user = await this.usersService.update(id, newUserData);
+		if (user) {
+			pubSub.publish(UserEvents.USER_UPDATED, { userUpdated: id });
+		}
+		return user;
+	}
+
+	@Mutation(() => Boolean)
+	async removeUser(@Args("id", { type: () => Int }) id: number) {
+		pubSub.publish(UserEvents.USER_REMOVED, id);
+		const user = await this.usersService.remove(id);
+		if (user) {
+			pubSub.publish(UserEvents.USER_REMOVED, { userRemoved: id });
+		}
+		return user;
 	}
 
 	@Subscription(() => User)
 	userAdded() {
-		// return pubSub.asyncIterator("uesrAdded");
+		return pubSub.asyncIterableIterator(UserEvents.USER_CREATED);
+	}
+
+	@Subscription(() => Int)
+	userUpdated() {
+		return pubSub.asyncIterableIterator(UserEvents.USER_UPDATED);
+	}
+
+	@Subscription(() => Int)
+	userRemoved() {
+		return pubSub.asyncIterableIterator(UserEvents.USER_REMOVED);
 	}
 }

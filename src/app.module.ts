@@ -19,7 +19,9 @@ import { join } from "path";
 			driver: ApolloDriver,
 			playground: !(process.env.NODE_ENV === "production"),
 			autoSchemaFile: join(process.cwd(), "src/schema.gql"),
-			installSubscriptionHandlers: true,
+			subscriptions: {
+				"graphql-ws": true,
+			},
 		}),
 		UsersModule,
 	],
