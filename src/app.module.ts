@@ -1,9 +1,11 @@
 import { Module } from "@nestjs/common";
-import { HeroModule } from "./hero/hero.module";
 import { UsersModule } from "./users/users.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
-import { DatabaseConfig} from "config/database.config";
+import { DatabaseConfig } from "config/database.config";
+import { GraphQLModule } from "@nestjs/graphql";
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
+import { join } from "path";
 
 @Module({
 	imports: [
@@ -13,7 +15,12 @@ import { DatabaseConfig} from "config/database.config";
 		TypeOrmModule.forRootAsync({
 			useFactory: () => DatabaseConfig,
 		}),
-		HeroModule,
+		GraphQLModule.forRoot<ApolloDriverConfig>({
+			driver: ApolloDriver,
+			playground: !(process.env.NODE_ENV === "production"),
+			autoSchemaFile: join(process.cwd(), "src/schema.gql"),
+			installSubscriptionHandlers: true,
+		}),
 		UsersModule,
 	],
 })
