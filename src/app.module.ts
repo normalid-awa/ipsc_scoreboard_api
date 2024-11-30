@@ -10,7 +10,7 @@ import { AuthModule } from "./auth/auth.module";
 import securityConfig from "config/security.config";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
-import { CaslModule } from './casl/casl.module';
+import { CaslModule } from "./casl/casl.module";
 
 @Module({
 	imports: [

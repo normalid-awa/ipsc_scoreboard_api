@@ -11,7 +11,7 @@ export function CreatePaginationArgs(maxTake: number = 50) {
 		@Field(() => Int, { nullable: true })
 		@Min(0)
 		skip: number = 0;
-	
+
 		@Field(() => Int, { nullable: true })
 		@Min(1)
 		take: number = 25;
