@@ -1,5 +1,10 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+	Column,
+	CreateDateColumn,
+	Entity,
+	PrimaryGeneratedColumn,
+} from "typeorm";
 
 @ObjectType()
 @Entity()
@@ -24,10 +29,13 @@ export class User {
 		return rawPassword;
 	}
 
+	@Column({ default: false })
+	verified: boolean;
+
+	@Column({ default: false })
+	isSystemAdmin: boolean;
+
 	@Field(() => Date)
 	@CreateDateColumn()
 	createdAt: Date;
-
-	@Column({ default: false })
-	verified: boolean;
 }
