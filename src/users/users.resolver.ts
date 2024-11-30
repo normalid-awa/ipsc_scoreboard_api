@@ -1,4 +1,4 @@
-import { Logger, NotFoundException } from "@nestjs/common";
+import { Logger, NotFoundException, UseGuards } from "@nestjs/common";
 import { User } from "./user.entity";
 import {
 	Args,
@@ -16,6 +16,7 @@ import {
 	UsersArgs,
 } from "./users.dto";
 import { PubSub } from "graphql-subscriptions";
+import { JwtAuthGuard } from "src/auth/auth.guard";
 
 const pubSub = new PubSub();
 
@@ -40,6 +41,7 @@ export class UsersResolver {
 	}
 
 	@Mutation(() => User)
+	@UseGuards(JwtAuthGuard)
 	async createUser(@Args() newUserData: NewUserArgs): Promise<User> {
 		const user = await this.usersService.create(newUserData);
 		pubSub.publish(UserEvents.USER_CREATED, { userAdded: user });
@@ -47,6 +49,7 @@ export class UsersResolver {
 	}
 
 	@Mutation(() => Boolean)
+	@UseGuards(JwtAuthGuard)
 	async updateUser(
 		@Args("id", { type: () => Int }) id: number,
 		@Args() newUserData: UpdateUserArgs,
@@ -59,6 +62,7 @@ export class UsersResolver {
 	}
 
 	@Mutation(() => Boolean)
+	@UseGuards(JwtAuthGuard)
 	async removeUser(@Args("id", { type: () => Int }) id: number) {
 		pubSub.publish(UserEvents.USER_REMOVED, id);
 		const user = await this.usersService.remove(id);
