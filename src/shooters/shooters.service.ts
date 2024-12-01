@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Shooter } from "./shooter.entity";
 import { Repository } from "typeorm";
 import {
-	NewShooterArgs,
+	CreateShooterArgs,
 	ShootersArgs,
 	UpdateShooterArgs,
 } from "./shooters.dto";
@@ -15,7 +15,7 @@ export class ShootersService {
 		private readonly shooterRepository: Repository<Shooter>,
 	) {}
 
-	async create(newShooter: NewShooterArgs) {
+	async create(newShooter: CreateShooterArgs) {
 		return await this.shooterRepository.save({
 			firstName: newShooter.firstName,
 			lastName: newShooter.lastName,

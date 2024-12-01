@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { NewUserArgs, UpdateUserArgs, UsersArgs } from "./users.dto";
+import { CreateUserArgs, UpdateUserArgs, UsersArgs } from "./users.dto";
 import { User } from "./user.entity";
 import { DeepPartial, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -24,7 +24,7 @@ export class UsersService {
 		return {};
 	}
 
-	async create(data: NewUserArgs): Promise<User> {
+	async create(data: CreateUserArgs): Promise<User> {
 		return await this.userRepository.save(
 			{
 				name: data.name,

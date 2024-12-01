@@ -6,7 +6,7 @@ import { CreatePaginationArgs } from "src/types";
 export class ShootersArgs extends CreatePaginationArgs(200) {}
 
 @ArgsType()
-export class NewShooterArgs implements Pick<Shooter, "firstName" | "lastName"> {
+export class CreateShooterArgs implements Pick<Shooter, "firstName" | "lastName"> {
 	@Field()
 	firstName: string;
 
@@ -15,4 +15,4 @@ export class NewShooterArgs implements Pick<Shooter, "firstName" | "lastName"> {
 }
 
 @ArgsType()
-export class UpdateShooterArgs extends PartialType(NewShooterArgs) {}
+export class UpdateShooterArgs extends PartialType(CreateShooterArgs) {}

@@ -3,7 +3,7 @@ import { Shooter } from "./shooter.entity";
 import { ShootersService } from "./shooters.service";
 import { NotFoundException, UseGuards } from "@nestjs/common";
 import {
-	NewShooterArgs,
+	CreateShooterArgs,
 	ShootersArgs,
 	UpdateShooterArgs,
 } from "./shooters.dto";
@@ -32,7 +32,7 @@ export class ShootersResolver {
 	@Mutation(() => Shooter)
 	@UseGuards(JwtAuthGuard, PoliciesGuard)
 	@CheckPolicies((ability) => ability.can(Action.Create, Shooter))
-	async createShooter(@Args() data: NewShooterArgs) {
+	async createShooter(@Args() data: CreateShooterArgs) {
 		return await this.shooterService.create(data);
 	}
 

@@ -12,7 +12,7 @@ import {
 } from "@nestjs/graphql";
 import { UsersService } from "./users.service";
 import {
-	NewUserArgs,
+	CreateUserArgs,
 	UpdateUserArgs,
 	UserEvents,
 	UsersArgs,
@@ -47,7 +47,7 @@ export class UsersResolver {
 
 	@Mutation(() => User)
 	@UseGuards(JwtAuthGuard, PoliciesGuard)
-	async createUser(@Args() newUserData: NewUserArgs): Promise<User> {
+	async createUser(@Args() newUserData: CreateUserArgs): Promise<User> {
 		const user = await this.usersService.create(newUserData);
 		pubSub.publish(UserEvents.USER_CREATED, { userAdded: user });
 		return user;

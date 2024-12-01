@@ -5,7 +5,7 @@ import { IsEmail, IsInt, IsOptional, IsStrongPassword } from "class-validator";
 import securityConfig from "config/security.config";
 
 @ArgsType()
-export class NewUserArgs implements Pick<User, "name" | "email"> {
+export class CreateUserArgs implements Pick<User, "name" | "email"> {
 	@Field()
 	name: string;
 
@@ -24,7 +24,7 @@ export class NewUserArgs implements Pick<User, "name" | "email"> {
 }
 
 @ArgsType()
-export class UpdateUserArgs implements Partial<NewUserArgs> {
+export class UpdateUserArgs implements Partial<CreateUserArgs> {
 	@Field({ nullable: true })
 	@IsOptional()
 	name?: string;
