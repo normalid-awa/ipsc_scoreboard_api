@@ -6,9 +6,13 @@ import {
 	InferSubjects,
 } from "@casl/ability";
 import { Injectable } from "@nestjs/common";
+import { Shooter } from "src/shooters/shooter.entity";
 import { User } from "src/users/user.entity";
 
-type Subjects = InferSubjects<typeof User> | "all";
+type Subjects =
+	| InferSubjects<typeof User>
+	| InferSubjects<typeof Shooter>
+	| "all";
 
 export enum Action {
 	Manage = "manage",
@@ -32,9 +36,13 @@ export class CaslAbilityFactory {
 		} else {
 			can(Action.Read, "all");
 
+			cannot(Action.Create, User);
 			can<User>(Action.Update, User, { id: user.id });
 			can(Action.Delete, User, { id: user.id });
-			cannot(Action.Create, User);
+
+			can<Shooter>(Action.Create, Shooter);
+			can<Shooter>(Action.Update, Shooter);
+			can<Shooter>(Action.Delete, Shooter);
 		}
 
 		return build({

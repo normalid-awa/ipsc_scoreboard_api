@@ -20,6 +20,8 @@ import {
 import { PubSub } from "graphql-subscriptions";
 import { JwtAuthGuard } from "src/auth/auth.guard";
 import { Shooter } from "src/shooters/shooter.entity";
+import { CheckPolicies, PoliciesGuard } from "src/casl/policies.guard";
+import { Action } from "src/casl/casl-ability.factory/casl-ability.factory";
 
 const pubSub = new PubSub();
 
@@ -44,7 +46,7 @@ export class UsersResolver {
 	}
 
 	@Mutation(() => User)
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(JwtAuthGuard, PoliciesGuard)
 	async createUser(@Args() newUserData: NewUserArgs): Promise<User> {
 		const user = await this.usersService.create(newUserData);
 		pubSub.publish(UserEvents.USER_CREATED, { userAdded: user });
@@ -52,7 +54,8 @@ export class UsersResolver {
 	}
 
 	@Mutation(() => Boolean)
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(JwtAuthGuard, PoliciesGuard)
+	@CheckPolicies((ability) => ability.can(Action.Update, User))
 	async updateUser(
 		@Args("id", { type: () => Int }) id: number,
 		@Args() newUserData: UpdateUserArgs,
@@ -65,7 +68,8 @@ export class UsersResolver {
 	}
 
 	@Mutation(() => Boolean)
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(JwtAuthGuard, PoliciesGuard)
+	@CheckPolicies((ability) => ability.can(Action.Delete, User))
 	async removeUser(@Args("id", { type: () => Int }) id: number) {
 		pubSub.publish(UserEvents.USER_REMOVED, id);
 		const user = await this.usersService.remove(id);
