@@ -55,7 +55,9 @@ export class UsersService {
 					{
 						email: data.email,
 						name: data.name,
-						...this.constructShooterJoinFromShooterId(data.shooterId),
+						...this.constructShooterJoinFromShooterId(
+							data.shooterId,
+						),
 					},
 				)
 			)?.affected || 0) > 0
