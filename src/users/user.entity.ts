@@ -7,6 +7,7 @@ import {
 	JoinColumn,
 	OneToOne,
 	PrimaryGeneratedColumn,
+	RelationId,
 } from "typeorm";
 
 @ObjectType()
@@ -36,6 +37,9 @@ export class User {
 	@Field(() => Shooter, { nullable: true })
 	@JoinColumn()
 	shooter?: Shooter;
+
+	@RelationId((user: User) => user.shooter)
+	shooterId?: number;
 
 	@Column({ default: false })
 	verified: boolean;

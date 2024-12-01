@@ -4,7 +4,9 @@ import {
 	Args,
 	Int,
 	Mutation,
+	Parent,
 	Query,
+	ResolveField,
 	Resolver,
 	Subscription,
 } from "@nestjs/graphql";
@@ -17,6 +19,7 @@ import {
 } from "./users.dto";
 import { PubSub } from "graphql-subscriptions";
 import { JwtAuthGuard } from "src/auth/auth.guard";
+import { Shooter } from "src/shooters/shooter.entity";
 
 const pubSub = new PubSub();
 
@@ -85,5 +88,13 @@ export class UsersResolver {
 	@Subscription(() => Int)
 	userRemoved() {
 		return pubSub.asyncIterableIterator(UserEvents.USER_REMOVED);
+	}
+
+	@ResolveField(() => Shooter)
+	async shooter(@Parent() user: User) {
+		if (!user.shooterId) {
+			return null;
+		}
+		return this.usersService.resolveShooter(user.shooterId);
 	}
 }

@@ -11,7 +11,7 @@ import securityConfig from "config/security.config";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { CaslModule } from "./casl/casl.module";
-import { ShootersModule } from './shooters/shooters.module';
+import { ShootersModule } from "./shooters/shooters.module";
 
 @Module({
 	imports: [

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { NewUserArgs, UpdateUserArgs, UsersArgs } from "./users.dto";
 import { User } from "./user.entity";
 import { Repository } from "typeorm";
@@ -15,25 +15,18 @@ export class UsersService {
 	) {}
 
 	async create(data: NewUserArgs): Promise<User> {
-		let shooter: Shooter | undefined;
-		if (data.shooter) {
-			shooter = await this.shooterRepository.findOneBy({
-				id: data.shooter,
-			});
-			if (!shooter) {
-				throw new NotFoundException("Shooter not found");
-			}
-		}
-
-		return await this.userRepository.save({
-			name: data.name,
-			email: data.email,
-			hashedPassword: User.HashPassword(data.password),
-			shooter: shooter,
-		});
+		return await this.userRepository.save(
+			{
+				name: data.name,
+				email: data.email,
+				hashedPassword: User.HashPassword(data.password),
+				shooter: { id: data.shooter },
+			},
+			{ reload: true },
+		);
 	}
 
-	async findOneById(id: number): Promise<User | undefined> {
+	async findOneById(id: number): Promise<User | null> {
 		return await this.userRepository.findOneBy({ id });
 	}
 
@@ -45,31 +38,25 @@ export class UsersService {
 	}
 
 	async update(id: number, data: UpdateUserArgs): Promise<boolean> {
-		let shooter: Shooter | undefined;
-		if (data.shooter) {
-			shooter = await this.shooterRepository.findOneBy({
-				id: data.shooter,
-			});
-			if (!shooter) {
-				throw new NotFoundException("Shooter not found");
-			}
-		}
-
 		return (
-			(
+			((
 				await this.userRepository.update(
 					{ id },
 					{
 						email: data.email,
 						name: data.name,
-						shooter: shooter,
+						shooter: { id: data.shooter },
 					},
 				)
-			).affected > 0
+			)?.affected || 0) > 0
 		);
 	}
 
 	async remove(id: number): Promise<boolean> {
-		return (await this.userRepository.delete(id)).affected > 0;
+		return ((await this.userRepository.delete(id))?.affected || 0) > 0;
+	}
+
+	async resolveShooter(id: number) {
+		return await this.shooterRepository.findOne({ where: { id } });
 	}
 }

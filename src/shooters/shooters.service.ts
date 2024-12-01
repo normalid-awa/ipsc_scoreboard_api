@@ -7,15 +7,12 @@ import {
 	ShootersArgs,
 	UpdateShooterArgs,
 } from "./shooters.dto";
-import { User } from "src/users/user.entity";
 
 @Injectable()
 export class ShootersService {
 	constructor(
 		@InjectRepository(Shooter)
 		private readonly shooterRepository: Repository<Shooter>,
-		@InjectRepository(User)
-		private readonly userRepository: Repository<User>,
 	) {}
 
 	async create(newShooter: NewShooterArgs) {
@@ -38,16 +35,16 @@ export class ShootersService {
 
 	async update(id: number, data: UpdateShooterArgs) {
 		return (
-			(
+			((
 				await this.shooterRepository.update(id, {
 					firstName: data.firstName,
 					lastName: data.lastName,
 				})
-			).affected > 0
+			)?.affected || 0) > 0
 		);
 	}
 
 	async remove(id: number) {
-		return (await this.shooterRepository.delete(id)).affected > 0;
+		return ((await this.shooterRepository.delete(id)).affected || 0) > 0;
 	}
 }
