@@ -6,7 +6,9 @@ import { CreatePaginationArgs } from "src/types";
 export class ShootersArgs extends CreatePaginationArgs(200) {}
 
 @ArgsType()
-export class CreateShooterArgs implements Pick<Shooter, "firstName" | "lastName"> {
+export class CreateShooterArgs
+	implements Pick<Shooter, "firstName" | "lastName">
+{
 	@Field()
 	firstName: string;
 

@@ -30,7 +30,7 @@ export class UsersService {
 				name: data.name,
 				email: data.email,
 				hashedPassword: User.HashPassword(data.password),
-				...this.constructShooterJoinFromShooterId(data.shooter),
+				...this.constructShooterJoinFromShooterId(data.shooterId),
 			},
 			{ reload: true },
 		);
@@ -55,7 +55,7 @@ export class UsersService {
 					{
 						email: data.email,
 						name: data.name,
-						...this.constructShooterJoinFromShooterId(data.shooter),
+						...this.constructShooterJoinFromShooterId(data.shooterId),
 					},
 				)
 			)?.affected || 0) > 0

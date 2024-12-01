@@ -11,7 +11,18 @@ import {
 import securityConfig from "config/security.config";
 
 @ArgsType()
-export class CreateUserArgs implements Pick<User, "name" | "email"> {
+export class CreateUserArgs
+	implements
+		Omit<
+			User,
+			| "shooter"
+			| "hashedPassword"
+			| "id"
+			| "verified"
+			| "isSystemAdmin"
+			| "createdAt"
+		>
+{
 	@Field()
 	@IsString()
 	name: string;
@@ -27,7 +38,7 @@ export class CreateUserArgs implements Pick<User, "name" | "email"> {
 	@Field(() => Int, { nullable: true })
 	@IsOptional()
 	@IsInt()
-	shooter?: number;
+	shooterId?: number;
 }
 
 @ArgsType()
