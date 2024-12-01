@@ -38,6 +38,10 @@ export class UsersService {
 	}
 
 	async update(id: number, data: UpdateUserArgs): Promise<boolean> {
+		let shooter = {};
+		if (data.shooter) {
+			shooter = { shooter: { id: data.shooter } };
+		}
 		return (
 			((
 				await this.userRepository.update(
@@ -45,7 +49,7 @@ export class UsersService {
 					{
 						email: data.email,
 						name: data.name,
-						shooter: { id: data.shooter },
+						...shooter,
 					},
 				)
 			)?.affected || 0) > 0
