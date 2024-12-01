@@ -12,6 +12,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { CaslModule } from "./casl/casl.module";
 import { ShootersModule } from "./shooters/shooters.module";
+import { TeamsModule } from "./teams/teams.module";
 
 @Module({
 	imports: [
@@ -39,6 +40,7 @@ import { ShootersModule } from "./shooters/shooters.module";
 		AuthModule,
 		CaslModule,
 		ShootersModule,
+		TeamsModule,
 	],
 })
 export class AppModule {}
