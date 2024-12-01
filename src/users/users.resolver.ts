@@ -28,11 +28,11 @@ export class UsersResolver {
 
 	@Query(() => User)
 	async user(@Args("id", { type: () => Int }) id: number): Promise<User> {
-		const recipe = await this.usersService.findOneById(id);
-		if (!recipe) {
+		const user = await this.usersService.findOneById(id);
+		if (!user) {
 			throw new NotFoundException(id);
 		}
-		return recipe;
+		return user;
 	}
 
 	@Query(() => [User])

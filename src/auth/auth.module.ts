@@ -6,9 +6,10 @@ import { User } from "src/users/user.entity";
 import { LocalStrategy } from "./local.strategy";
 import { JwtStrategy } from "./jwt.strategy";
 import { UsersService } from "src/users/users.service";
+import { Shooter } from "src/shooters/shooter.entity";
 
 @Module({
-	imports: [TypeOrmModule.forFeature([User])],
+	imports: [TypeOrmModule.forFeature([User, Shooter])],
 	providers: [
 		UsersService,
 		AuthResolver,

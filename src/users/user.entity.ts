@@ -1,8 +1,11 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Shooter } from "src/shooters/shooter.entity";
 import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	JoinColumn,
+	OneToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm";
 
@@ -28,6 +31,11 @@ export class User {
 		//TODO: Implement password hashing
 		return rawPassword;
 	}
+
+	@OneToOne(() => Shooter, { nullable: true })
+	@Field(() => Shooter, { nullable: true })
+	@JoinColumn()
+	shooter?: Shooter;
 
 	@Column({ default: false })
 	verified: boolean;

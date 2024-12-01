@@ -2,10 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Shooter {
+  id: Int!
+  firstName: String!
+  lastName: String!
+}
+
 type User {
   id: Int!
   email: String!
   name: String!
+  shooter: Shooter
   createdAt: DateTime!
 }
 
@@ -19,12 +26,17 @@ type Query {
   users(skip: Int = 0, take: Int = 25): [User!]!
   login(email: String!, password: String!): String!
   whoAmI: User!
+  shooter(id: Int!): Shooter!
+  shooters(skip: Int = 0, take: Int = 25): [Shooter!]!
 }
 
 type Mutation {
-  createUser(name: String!, email: String!, password: String!): User!
-  updateUser(id: Int!, name: String, email: String): Boolean!
+  createUser(name: String!, email: String!, password: String!, shooter: Int): User!
+  updateUser(id: Int!, name: String, email: String, shooter: Int): Boolean!
   removeUser(id: Int!): Boolean!
+  createShooter(firstName: String!, lastName: String!): Shooter!
+  updateShooter(id: Int!, firstName: String, lastName: String): Boolean!
+  removeShooter(id: Int!): Boolean!
 }
 
 type Subscription {
