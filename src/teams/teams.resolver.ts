@@ -11,7 +11,7 @@ import { TeamsService } from "./teams.service";
 import { CreateTeamArgs, TeamsArgs, UpdateTeamArgs } from "./teams.dto";
 import { Team } from "./team.entity";
 import { User } from "src/users/user.entity";
-import { UseGuards } from "@nestjs/common";
+import { UnauthorizedException, UseGuards } from "@nestjs/common";
 import { CurrentUser, JwtAuthGuard } from "src/auth/auth.guard";
 import {
 	Action,
@@ -47,11 +47,14 @@ export class TeamsResolver {
 		@Args() data: UpdateTeamArgs,
 		@CurrentUser() user: User,
 	) {
-		await this.ability.handleUserAbility(
-			user,
-			async () => await this.teamsService.findOneById(id),
-			Action.Update,
-		);
+		if (
+			!(await this.ability.validateUserAbility(
+				user,
+				async () => await this.teamsService.findOneById(id),
+				Action.Update,
+			))
+		)
+			throw new UnauthorizedException();
 		return await this.teamsService.update(id, data);
 	}
 
@@ -61,11 +64,14 @@ export class TeamsResolver {
 		@Args("id", { type: () => Int }) id: number,
 		@CurrentUser() user: User,
 	) {
-		await this.ability.handleUserAbility(
-			user,
-			async () => await this.teamsService.findOneById(id),
-			Action.Delete,
-		);
+		if (
+			!(await this.ability.validateUserAbility(
+				user,
+				async () => await this.teamsService.findOneById(id),
+				Action.Delete,
+			))
+		)
+			throw new UnauthorizedException();
 		return await this.teamsService.remove(id);
 	}
 

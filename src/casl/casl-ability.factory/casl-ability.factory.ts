@@ -5,7 +5,7 @@ import {
 	InferSubjects,
 	MongoAbility,
 } from "@casl/ability";
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { Shooter } from "src/shooters/shooter.entity";
 import { Team } from "src/teams/team.entity";
 import { User } from "src/users/user.entity";
@@ -66,16 +66,7 @@ export class CaslAbilityFactory {
 		action: Action,
 	) {
 		const subjectValue = await subject();
-		if (!subjectValue) throw new ForbiddenException();
+		if (!subjectValue) throw new UnauthorizedException();
 		return this.createForUser(user).can(action, subjectValue);
-	}
-
-	async handleUserAbility<T extends Subjects>(
-		user: User,
-		subject: () => Promise<T | null>,
-		action: Action,
-	) {
-		if (await this.validateUserAbility(user, subject, action)) return;
-		else throw new ForbiddenException();
 	}
 }

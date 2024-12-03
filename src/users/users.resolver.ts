@@ -1,4 +1,8 @@
-import { NotFoundException, UseGuards } from "@nestjs/common";
+import {
+	NotFoundException,
+	UnauthorizedException,
+	UseGuards,
+} from "@nestjs/common";
 import { User } from "./user.entity";
 import {
 	Args,
@@ -63,11 +67,14 @@ export class UsersResolver {
 		@Args() newUserData: UpdateUserArgs,
 		@CurrentUser() user: User,
 	): Promise<boolean> {
-		this.ability.handleUserAbility(
-			user,
-			async () => await this.usersService.findOneById(id),
-			Action.Update,
-		);
+		if (
+			!(await this.ability.validateUserAbility(
+				user,
+				async () => await this.usersService.findOneById(id),
+				Action.Update,
+			))
+		)
+			throw new UnauthorizedException();
 		const updateResult = await this.usersService.update(id, newUserData);
 		if (user) {
 			pubSub.publish(UserEvents.USER_UPDATED, { userUpdated: id });
@@ -81,11 +88,14 @@ export class UsersResolver {
 		@Args("id", { type: () => Int }) id: number,
 		@CurrentUser() user: User,
 	) {
-		this.ability.handleUserAbility(
-			user,
-			async () => await this.usersService.findOneById(id),
-			Action.Delete,
-		);
+		if (
+			!(await this.ability.validateUserAbility(
+				user,
+				async () => await this.usersService.findOneById(id),
+				Action.Delete,
+			))
+		)
+			throw new UnauthorizedException();
 		pubSub.publish(UserEvents.USER_REMOVED, id);
 		const removeResult = await this.usersService.remove(id);
 		if (removeResult) {
