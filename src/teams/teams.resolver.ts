@@ -11,10 +11,19 @@ import { TeamsService } from "./teams.service";
 import { CreateTeamArgs, TeamsArgs, UpdateTeamArgs } from "./teams.dto";
 import { Team } from "./team.entity";
 import { User } from "src/users/user.entity";
+import { UseGuards } from "@nestjs/common";
+import { CurrentUser, JwtAuthGuard } from "src/auth/auth.guard";
+import {
+	Action,
+	CaslAbilityFactory,
+} from "src/casl/casl-ability.factory/casl-ability.factory";
 
 @Resolver(() => Team)
 export class TeamsResolver {
-	constructor(private readonly teamsService: TeamsService) {}
+	constructor(
+		private readonly teamsService: TeamsService,
+		private readonly ability: CaslAbilityFactory,
+	) {}
 
 	@Query(() => [Team])
 	async teams(@Args() pagination: TeamsArgs) {
@@ -32,15 +41,31 @@ export class TeamsResolver {
 	}
 
 	@Mutation(() => Boolean)
+	@UseGuards(JwtAuthGuard)
 	async updateTeam(
 		@Args("id", { type: () => Int }) id: number,
 		@Args() data: UpdateTeamArgs,
+		@CurrentUser() user: User,
 	) {
+		await this.ability.handleUserAbility(
+			user,
+			async () => await this.teamsService.findOneById(id),
+			Action.Update,
+		);
 		return await this.teamsService.update(id, data);
 	}
 
 	@Mutation(() => Boolean)
-	async removeTeam(@Args("id", { type: () => Int }) id: number) {
+	@UseGuards(JwtAuthGuard)
+	async removeTeam(
+		@Args("id", { type: () => Int }) id: number,
+		@CurrentUser() user: User,
+	) {
+		await this.ability.handleUserAbility(
+			user,
+			async () => await this.teamsService.findOneById(id),
+			Action.Delete,
+		);
 		return await this.teamsService.remove(id);
 	}
 
