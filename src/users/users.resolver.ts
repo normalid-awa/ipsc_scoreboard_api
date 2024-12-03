@@ -1,4 +1,4 @@
-import { Logger, NotFoundException, UseGuards } from "@nestjs/common";
+import { NotFoundException, UseGuards } from "@nestjs/common";
 import { User } from "./user.entity";
 import {
 	Args,
@@ -18,18 +18,21 @@ import {
 	UsersArgs,
 } from "./users.dto";
 import { PubSub } from "graphql-subscriptions";
-import { JwtAuthGuard } from "src/auth/auth.guard";
+import { CurrentUser, JwtAuthGuard } from "src/auth/auth.guard";
 import { Shooter } from "src/shooters/shooter.entity";
-import { CheckPolicies, PoliciesGuard } from "src/casl/policies.guard";
-import { Action } from "src/casl/casl-ability.factory/casl-ability.factory";
+import {
+	Action,
+	CaslAbilityFactory,
+} from "src/casl/casl-ability.factory/casl-ability.factory";
 
 const pubSub = new PubSub();
 
 @Resolver(() => User)
 export class UsersResolver {
-	private readonly logger = new Logger(this.constructor.name);
-
-	constructor(private readonly usersService: UsersService) {}
+	constructor(
+		private readonly usersService: UsersService,
+		private readonly ability: CaslAbilityFactory,
+	) {}
 
 	@Query(() => User)
 	async user(@Args("id", { type: () => Int }) id: number): Promise<User> {
@@ -46,7 +49,7 @@ export class UsersResolver {
 	}
 
 	@Mutation(() => User)
-	@UseGuards(JwtAuthGuard, PoliciesGuard)
+	@UseGuards(JwtAuthGuard)
 	async createUser(@Args() newUserData: CreateUserArgs): Promise<User> {
 		const user = await this.usersService.create(newUserData);
 		pubSub.publish(UserEvents.USER_CREATED, { userAdded: user });
@@ -54,29 +57,41 @@ export class UsersResolver {
 	}
 
 	@Mutation(() => Boolean)
-	@UseGuards(JwtAuthGuard, PoliciesGuard)
-	@CheckPolicies((ability) => ability.can(Action.Update, User))
+	@UseGuards(JwtAuthGuard)
 	async updateUser(
 		@Args("id", { type: () => Int }) id: number,
 		@Args() newUserData: UpdateUserArgs,
+		@CurrentUser() user: User,
 	): Promise<boolean> {
-		const user = await this.usersService.update(id, newUserData);
+		this.ability.handleUserAbility(
+			user,
+			async () => await this.usersService.findOneById(id),
+			Action.Update,
+		);
+		const updateResult = await this.usersService.update(id, newUserData);
 		if (user) {
 			pubSub.publish(UserEvents.USER_UPDATED, { userUpdated: id });
 		}
-		return user;
+		return updateResult;
 	}
 
 	@Mutation(() => Boolean)
-	@UseGuards(JwtAuthGuard, PoliciesGuard)
-	@CheckPolicies((ability) => ability.can(Action.Delete, User))
-	async removeUser(@Args("id", { type: () => Int }) id: number) {
+	@UseGuards(JwtAuthGuard)
+	async removeUser(
+		@Args("id", { type: () => Int }) id: number,
+		@CurrentUser() user: User,
+	) {
+		this.ability.handleUserAbility(
+			user,
+			async () => await this.usersService.findOneById(id),
+			Action.Delete,
+		);
 		pubSub.publish(UserEvents.USER_REMOVED, id);
-		const user = await this.usersService.remove(id);
-		if (user) {
+		const removeResult = await this.usersService.remove(id);
+		if (removeResult) {
 			pubSub.publish(UserEvents.USER_REMOVED, { userRemoved: id });
 		}
-		return user;
+		return removeResult;
 	}
 
 	@Subscription(() => User)
