@@ -1,17 +1,19 @@
 import {
-	Ability,
 	AbilityBuilder,
-	AbilityClass,
+	createMongoAbility,
 	ExtractSubjectType,
 	InferSubjects,
+	MongoAbility,
 } from "@casl/ability";
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { Shooter } from "src/shooters/shooter.entity";
+import { Team } from "src/teams/team.entity";
 import { User } from "src/users/user.entity";
 
-type Subjects =
+export type Subjects =
 	| InferSubjects<typeof User>
 	| InferSubjects<typeof Shooter>
+	| InferSubjects<typeof Team>
 	| "all";
 
 export enum Action {
@@ -22,16 +24,18 @@ export enum Action {
 	Delete = "delete",
 }
 
-export type AppAbility = Ability<[Action, Subjects]>;
+export type AppAbility = MongoAbility<[Action, Subjects]>;
 
 @Injectable()
 export class CaslAbilityFactory {
+	constructor() {}
+
 	createForUser(user: User) {
 		const { can, cannot, build } = new AbilityBuilder<
-			Ability<[Action, Subjects]>
-		>(Ability as AbilityClass<AppAbility>);
+			MongoAbility<[Action, Subjects]>
+		>(createMongoAbility);
 
-		if (user.isSystemAdmin) {
+		if (user?.isSystemAdmin || false) {
 			can(Action.Manage, "all");
 		} else {
 			can(Action.Read, "all");
@@ -43,6 +47,10 @@ export class CaslAbilityFactory {
 			can<Shooter>(Action.Create, Shooter);
 			can<Shooter>(Action.Update, Shooter);
 			can<Shooter>(Action.Delete, Shooter);
+
+			can<Team>(Action.Create, Team);
+			can<Team>(Action.Update, Team, { ownerId: user.id });
+			can<Team>(Action.Delete, Team, { ownerId: user.id });
 		}
 
 		return build({
@@ -50,5 +58,24 @@ export class CaslAbilityFactory {
 			detectSubjectType: (item) =>
 				item.constructor as ExtractSubjectType<Subjects>,
 		});
+	}
+
+	async validateUserAbility<T extends Subjects>(
+		user: User,
+		subject: () => Promise<T | null>,
+		action: Action,
+	) {
+		const subjectValue = await subject();
+		if (!subjectValue) throw new ForbiddenException();
+		return this.createForUser(user).can(action, subjectValue);
+	}
+
+	async handleUserAbility<T extends Subjects>(
+		user: User,
+		subject: () => Promise<T | null>,
+		action: Action,
+	) {
+		if (await this.validateUserAbility(user, subject, action)) return;
+		else throw new ForbiddenException();
 	}
 }
