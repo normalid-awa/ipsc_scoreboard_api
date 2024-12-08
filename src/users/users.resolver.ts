@@ -53,7 +53,6 @@ export class UsersResolver {
 	}
 
 	@Mutation(() => User)
-	@UseGuards(JwtAuthGuard)
 	async createUser(@Args() newUserData: CreateUserArgs): Promise<User> {
 		const user = await this.usersService.create(newUserData);
 		pubSub.publish(UserEvents.USER_CREATED, { userAdded: user });
