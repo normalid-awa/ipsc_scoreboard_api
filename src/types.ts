@@ -5,6 +5,17 @@ export interface SecurityConfig {
 	jwtSecret: string;
 }
 
+export interface FilesConfig {
+	/**
+	 * In MB
+	 */
+	maxFileSize: number;
+
+	maxFiles: number;
+
+	uploadDir: string;
+}
+
 export function CreatePaginationArgs(maxTake: number = 50) {
 	@ArgsType()
 	class CommonPaginationArgs {
