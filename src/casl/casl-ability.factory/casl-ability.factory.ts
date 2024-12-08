@@ -6,6 +6,7 @@ import {
 	MongoAbility,
 } from "@casl/ability";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { File } from "src/files/file.entity";
 import { Shooter } from "src/shooters/shooter.entity";
 import { Team } from "src/teams/team.entity";
 import { User } from "src/users/user.entity";
@@ -14,6 +15,7 @@ export type Subjects =
 	| InferSubjects<typeof User>
 	| InferSubjects<typeof Shooter>
 	| InferSubjects<typeof Team>
+	| InferSubjects<typeof File>
 	| "all";
 
 export enum Action {
@@ -51,6 +53,10 @@ export class CaslAbilityFactory {
 			can<Team>(Action.Create, Team);
 			can<Team>(Action.Update, Team, { ownerId: user.id });
 			can<Team>(Action.Delete, Team, { ownerId: user.id });
+
+			can<File>(Action.Create, File);
+			can<File>(Action.Update, File, { ownerId: user.id });
+			can<File>(Action.Delete, File, { ownerId: user.id });
 		}
 
 		return build({

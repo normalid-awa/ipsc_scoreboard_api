@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Shooter } from "./shooter.entity";
-import { Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import {
 	CreateShooterArgs,
 	ShootersArgs,
@@ -23,7 +23,7 @@ export class ShootersService {
 	}
 
 	async fineOneById(id: number) {
-		return await this.shooterRepository.findOneBy({ id });
+		return await this.shooterRepository.findOneBy({ id: Equal(id) });
 	}
 
 	async findAll(args: ShootersArgs) {
@@ -36,15 +36,21 @@ export class ShootersService {
 	async update(id: number, data: UpdateShooterArgs) {
 		return (
 			((
-				await this.shooterRepository.update(id, {
-					firstName: data.firstName,
-					lastName: data.lastName,
-				})
+				await this.shooterRepository.update(
+					{ id: Equal(id) },
+					{
+						firstName: data.firstName,
+						lastName: data.lastName,
+					},
+				)
 			)?.affected || 0) > 0
 		);
 	}
 
 	async remove(id: number) {
-		return ((await this.shooterRepository.delete(id)).affected || 0) > 0;
+		return (
+			((await this.shooterRepository.delete({ id: Equal(id) }))
+				.affected || 0) > 0
+		);
 	}
 }
