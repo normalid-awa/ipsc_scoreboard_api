@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/users/user.entity";
-import { Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import { LoginArgs } from "./auth.dto";
 import { JwtService } from "@nestjs/jwt";
 
@@ -15,7 +15,7 @@ export class AuthService {
 
 	async validateUser(email: string, password: string): Promise<User> {
 		const user = await this.userRepository.findOne({
-			where: { email },
+			where: { email: Equal(email) },
 		});
 
 		if (!user || User.HashPassword(password) !== user.hashedPassword) {

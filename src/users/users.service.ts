@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { CreateUserArgs, UpdateUserArgs, UsersArgs } from "./users.dto";
 import { User } from "./user.entity";
-import { DeepPartial, Repository } from "typeorm";
+import { DeepPartial, Equal, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Shooter } from "src/shooters/shooter.entity";
 
@@ -37,7 +37,7 @@ export class UsersService {
 	}
 
 	async findOneById(id: number): Promise<User | null> {
-		return await this.userRepository.findOneBy({ id });
+		return await this.userRepository.findOneBy({ id: Equal(id) });
 	}
 
 	async findAll(recipesArgs: UsersArgs): Promise<User[]> {
@@ -51,7 +51,7 @@ export class UsersService {
 		return (
 			((
 				await this.userRepository.update(
-					{ id },
+					{ id: Equal(id) },
 					{
 						email: data.email,
 						name: data.name,
@@ -65,10 +65,15 @@ export class UsersService {
 	}
 
 	async remove(id: number): Promise<boolean> {
-		return ((await this.userRepository.delete(id))?.affected || 0) > 0;
+		return (
+			((await this.userRepository.delete({ id: Equal(id) }))?.affected ||
+				0) > 0
+		);
 	}
 
 	async resolveShooter(id: number) {
-		return await this.shooterRepository.findOne({ where: { id } });
+		return await this.shooterRepository.findOne({
+			where: { id: Equal(id) },
+		});
 	}
 }

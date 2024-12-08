@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Team } from "./team.entity";
-import { Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import { CreateTeamArgs, TeamsArgs, UpdateTeamArgs } from "./teams.dto";
 import { User } from "src/users/user.entity";
 
@@ -15,7 +15,7 @@ export class TeamsService {
 	) {}
 
 	async findOneById(id: number) {
-		return await this.teamRepository.findOne({ where: { id } });
+		return await this.teamRepository.findOne({ where: { id: Equal(id) } });
 	}
 
 	async findAll(pagination: TeamsArgs) {
@@ -48,7 +48,7 @@ export class TeamsService {
 		return (
 			((
 				await this.teamRepository.update(
-					{ id },
+					{ id: Equal(id) },
 					{
 						description: data.description,
 						name: data.name,
@@ -61,10 +61,13 @@ export class TeamsService {
 	}
 
 	async remove(id: number) {
-		return ((await this.teamRepository.delete({ id }))?.affected || 0) > 0;
+		return (
+			((await this.teamRepository.delete({ id: Equal(id) }))?.affected ||
+				0) > 0
+		);
 	}
 
 	async resolveOwner(id: number) {
-		return await this.userRepository.findOne({ where: { id } });
+		return await this.userRepository.findOne({ where: { id: Equal(id) } });
 	}
 }
