@@ -8,6 +8,7 @@ import {
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { File } from "src/files/file.entity";
 import { Shooter } from "src/shooters/shooter.entity";
+import { Stage } from "src/stages/stage.entity";
 import { Team } from "src/teams/team.entity";
 import { User } from "src/users/user.entity";
 
@@ -16,6 +17,7 @@ export type Subjects =
 	| InferSubjects<typeof Shooter>
 	| InferSubjects<typeof Team>
 	| InferSubjects<typeof File>
+	| InferSubjects<typeof Stage>
 	| "all";
 
 export enum Action {
@@ -57,6 +59,10 @@ export class CaslAbilityFactory {
 			can<File>(Action.Create, File);
 			can<File>(Action.Update, File, { ownerId: user.id });
 			can<File>(Action.Delete, File, { ownerId: user.id });
+
+			can<Stage>(Action.Create, Stage);
+			can<Stage>(Action.Update, Stage, { designerId: user.id });
+			can<Stage>(Action.Delete, Stage, { designerId: user.id });
 		}
 
 		return build({

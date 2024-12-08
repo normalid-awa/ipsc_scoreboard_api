@@ -13,6 +13,7 @@ import { PassportModule } from "@nestjs/passport";
 import { CaslModule } from "./casl/casl.module";
 import { ShootersModule } from "./shooters/shooters.module";
 import { TeamsModule } from "./teams/teams.module";
+import { StagesModule } from "./stages/stages.module";
 import { FilesModule } from "./files/files.module";
 
 @Module({
@@ -43,6 +44,7 @@ import { FilesModule } from "./files/files.module";
 		ShootersModule,
 		TeamsModule,
 		FilesModule,
+		StagesModule,
 	],
 })
 export class AppModule {}

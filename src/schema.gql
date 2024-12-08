@@ -21,18 +21,10 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Team {
-  id: Int!
-  name: String!
-  description: String
-  url: String
-  owner: User!
-  createdAt: DateTime!
-}
-
 type Stage {
   id: Int!
   name: String!
+  attachments: [StageAttachment!]!
   paperTargets: [PaperTarget!]!
   noShooots: Int!
   popper: Int!
@@ -42,10 +34,24 @@ type Stage {
   createdAt: DateTime!
 }
 
+type StageAttachment {
+  id: Int!
+  fileId: String!
+}
+
 type PaperTarget {
   id: Int!
+  name: String!
   requiredHits: Int!
-  stage: Stage!
+}
+
+type Team {
+  id: Int!
+  name: String!
+  description: String
+  url: String
+  owner: User!
+  createdAt: DateTime!
 }
 
 type Query {
@@ -57,6 +63,8 @@ type Query {
   shooters(skip: Int = 0, take: Int = 25): [Shooter!]!
   teams(skip: Int = 0, take: Int = 25): [Team!]!
   team(id: Int!): Team!
+  stages(skip: Int = 0, take: Int = 25): [Stage!]!
+  stage(id: Int!): Stage!
 }
 
 type Mutation {
@@ -69,6 +77,14 @@ type Mutation {
   createTeam(name: String!, description: String, url: String, ownerId: Int!): Team!
   updateTeam(id: Int!, name: String, description: String, url: String, ownerId: Int): Boolean!
   removeTeam(id: Int!): Boolean!
+  createStage(name: String!, briefing: String!, attachments: [String!]!, designer: Int!, noShooots: Int!, paperTargets: [CreateStagePaperTargetInput!]!, popper: Int!, walkthroughTime: Float!): Stage!
+  updateStage(id: Int!, name: String, briefing: String, attachments: [String!], designer: Int, noShooots: Int, paperTargets: [CreateStagePaperTargetInput!], popper: Int, walkthroughTime: Float): Boolean!
+  removeStage(id: Int!): Boolean!
+}
+
+input CreateStagePaperTargetInput {
+  name: String!
+  requiredHits: Int!
 }
 
 type Subscription {
