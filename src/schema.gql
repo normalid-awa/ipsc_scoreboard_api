@@ -30,6 +30,24 @@ type Team {
   createdAt: DateTime!
 }
 
+type Stage {
+  id: Int!
+  name: String!
+  paperTargets: [PaperTarget!]!
+  noShooots: Int!
+  popper: Int!
+  walkthroughTime: Float!
+  briefing: String!
+  designer: User!
+  createdAt: DateTime!
+}
+
+type PaperTarget {
+  id: Int!
+  requiredHits: Int!
+  stage: Stage!
+}
+
 type Query {
   user(id: Int!): User!
   users(skip: Int = 0, take: Int = 25): [User!]!
