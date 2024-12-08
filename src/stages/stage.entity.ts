@@ -1,4 +1,5 @@
 import { ArgsType, Field, Int, ObjectType } from "@nestjs/graphql";
+import { File } from "src/files/file.entity";
 import { User } from "src/users/user.entity";
 import {
 	Column,
@@ -23,9 +24,22 @@ export class Stage {
 	@Column()
 	name: string;
 
+	@Field(() => [StageAttachment])
+	@OneToMany(
+		() => StageAttachment,
+		(stageAttachment) => stageAttachment.stage,
+		{
+			cascade: true,
+		},
+	)
+	attachments: StageAttachment[];
+
+	@RelationId((stage: Stage) => stage.attachments)
+	attachmentsId: number[];
+
 	@Field(() => [PaperTarget])
 	@OneToMany(() => PaperTarget, (paperTarget) => paperTarget.stage, {
-		eager: true,
+		cascade: true,
 	})
 	paperTargets: PaperTarget[];
 
@@ -63,17 +77,52 @@ export class Stage {
 
 @ObjectType()
 @Entity()
+export class StageAttachment {
+	@PrimaryGeneratedColumn()
+	@Field(() => Int)
+	id: number;
+
+	@JoinColumn()
+	@ManyToOne(() => File, {
+		onDelete: "CASCADE",
+		orphanedRowAction: "delete",
+	})
+	file: File;
+
+	@Field()
+	@RelationId((stageAttachment: StageAttachment) => stageAttachment.file)
+	fileId: string;
+
+	@JoinColumn()
+	@ManyToOne(() => Stage, {
+		onDelete: "CASCADE",
+		orphanedRowAction: "delete",
+	})
+	stage: Stage;
+
+	@RelationId((stageAttachment: StageAttachment) => stageAttachment.stage)
+	stageId: number;
+}
+
+@ObjectType()
+@Entity()
 export class PaperTarget {
 	@PrimaryGeneratedColumn()
 	@Field(() => Int)
 	id: number;
 
+	@Field()
+	@Column()
+	name: string;
+
 	@Field(() => Int)
 	@Column({ type: "int" })
 	requiredHits: number;
 
-	@Field(() => Stage)
 	@JoinColumn()
-	@ManyToOne(() => Stage, (stage) => stage.paperTargets)
+	@ManyToOne(() => Stage, (stage) => stage.paperTargets, {
+		onDelete: "CASCADE",
+		orphanedRowAction: "delete",
+	})
 	stage: Stage;
 }
