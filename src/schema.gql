@@ -32,14 +32,6 @@ enum Sport {
   USPSA
 }
 
-type User {
-  id: Int!
-  email: String!
-  name: String!
-  shooters: [Shooter!]
-  createdAt: DateTime!
-}
-
 type Stage {
   id: Int!
   name: String!
@@ -62,6 +54,15 @@ type PaperTarget {
   id: Int!
   name: String!
   requiredHits: Int!
+}
+
+type User {
+  id: Int!
+  email: String!
+  name: String!
+  shooters: [Shooter!]
+  stages: [Stage!]
+  createdAt: DateTime!
 }
 
 type Query {

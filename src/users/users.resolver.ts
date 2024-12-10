@@ -28,6 +28,7 @@ import {
 	CaslAbilityFactory,
 } from "src/casl/casl-ability.factory/casl-ability.factory";
 import { Shooter } from "src/shooters/shooter.entity";
+import { Stage } from "src/stages/stage.entity";
 
 const pubSub = new PubSub();
 
@@ -121,5 +122,10 @@ export class UsersResolver {
 	@ResolveField(() => [Shooter], { nullable: true })
 	async shooters(@Parent() user: User) {
 		return await this.usersService.resolve<Shooter[]>(user.id, "shooters");
+	}
+
+	@ResolveField(() => [Stage], { nullable: true })
+	async stages(@Parent() user: User) {
+		return await this.usersService.resolve<Stage>(user.id, "stages");
 	}
 }

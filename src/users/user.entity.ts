@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Shooter } from "src/shooters/shooter.entity";
+import { Stage } from "src/stages/stage.entity";
 import {
 	Column,
 	CreateDateColumn,
@@ -34,6 +35,10 @@ export class User {
 	@Field(() => [Shooter], { nullable: true })
 	@OneToMany(() => Shooter, (team) => team.owner, { nullable: true })
 	shooters?: Shooter[];
+
+	@Field(() => [Stage], { nullable: true })
+	@OneToMany(() => Stage, (stage) => stage.designer, { nullable: true })
+	stages?: Stage[];
 
 	@Column({ default: false })
 	verified: boolean;
