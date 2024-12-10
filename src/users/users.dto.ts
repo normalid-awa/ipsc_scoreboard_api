@@ -1,12 +1,9 @@
-import { ArgsType, Field, Int, OmitType, PartialType } from "@nestjs/graphql";
+import { ArgsType, Field, OmitType, PartialType } from "@nestjs/graphql";
 import { User } from "./user.entity";
 import { CreatePaginationArgs } from "src/types";
 import {
-	IsEmail,
-	IsInt,
-	IsOptional,
-	IsString,
-	IsStrongPassword,
+	IsEmail, IsString,
+	IsStrongPassword
 } from "class-validator";
 import securityConfig from "config/security.config";
 
@@ -15,7 +12,6 @@ export class CreateUserArgs
 	implements
 		Omit<
 			User,
-			| "shooter"
 			| "hashedPassword"
 			| "id"
 			| "verified"
@@ -34,11 +30,6 @@ export class CreateUserArgs
 	@Field()
 	@IsStrongPassword(securityConfig)
 	password: string;
-
-	@Field(() => Int, { nullable: true })
-	@IsOptional()
-	@IsInt()
-	shooterId?: number;
 }
 
 @ArgsType()

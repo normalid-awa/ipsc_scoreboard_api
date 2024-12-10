@@ -7,12 +7,8 @@ import { User } from "./user.entity";
 import {
 	Args,
 	Int,
-	Mutation,
-	Parent,
-	Query,
-	ResolveField,
-	Resolver,
-	Subscription,
+	Mutation, Query, Resolver,
+	Subscription
 } from "@nestjs/graphql";
 import { UsersService } from "./users.service";
 import {
@@ -23,7 +19,6 @@ import {
 } from "./users.dto";
 import { PubSub } from "graphql-subscriptions";
 import { CurrentUser, JwtAuthGuard } from "src/auth/auth.guard";
-import { Shooter } from "src/shooters/shooter.entity";
 import {
 	Action,
 	CaslAbilityFactory,
@@ -116,13 +111,5 @@ export class UsersResolver {
 	@Subscription(() => Int)
 	userRemoved() {
 		return pubSub.asyncIterableIterator(UserEvents.USER_REMOVED);
-	}
-
-	@ResolveField(() => Shooter)
-	async shooter(@Parent() user: User) {
-		if (!user.shooterId) {
-			return null;
-		}
-		return this.usersService.resolveShooter(user.shooterId);
 	}
 }

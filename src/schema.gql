@@ -2,6 +2,18 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type User {
+  id: Int!
+  email: String!
+  name: String!
+  createdAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Team {
   id: Int!
   name: String!
@@ -11,24 +23,20 @@ type Team {
   createdAt: DateTime!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type Shooter {
   id: Int!
   firstName: String!
   lastName: String!
   team: Team
+  owner: User
+  sport: Sport!
 }
 
-type User {
-  id: Int!
-  email: String!
-  name: String!
-  shooter: Shooter
-  createdAt: DateTime!
+enum Sport {
+  IDPA
+  IPSC
+  ThreeGun
+  USPSA
 }
 
 type Stage {
@@ -69,11 +77,11 @@ type Query {
 }
 
 type Mutation {
-  createUser(name: String!, email: String!, password: String!, shooterId: Int): User!
-  updateUser(id: Int!, name: String, email: String, shooterId: Int): Boolean!
+  createUser(name: String!, email: String!, password: String!): User!
+  updateUser(id: Int!, name: String, email: String): Boolean!
   removeUser(id: Int!): Boolean!
-  createShooter(firstName: String!, lastName: String!): Shooter!
-  updateShooter(id: Int!, firstName: String, lastName: String): Boolean!
+  createShooter(firstName: String!, lastName: String!, owner: Int, sport: Sport!): Shooter!
+  updateShooter(id: Int!, firstName: String, lastName: String, owner: Int, sport: Sport): Boolean!
   removeShooter(id: Int!): Boolean!
   createTeam(name: String!, description: String, url: String, ownerId: Int!): Team!
   updateTeam(id: Int!, name: String, description: String, url: String, ownerId: Int): Boolean!

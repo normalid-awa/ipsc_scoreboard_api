@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { CreateUserArgs, UpdateUserArgs, UsersArgs } from "./users.dto";
 import { User } from "./user.entity";
-import { DeepPartial, Equal, Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Shooter } from "src/shooters/shooter.entity";
 
@@ -14,23 +14,12 @@ export class UsersService {
 		private readonly shooterRepository: Repository<Shooter>,
 	) {}
 
-	private constructShooterJoinFromShooterId(
-		shooterId: number | undefined | null,
-	): DeepPartial<User> {
-		if (shooterId !== undefined) {
-			// @ts-expect-error The type of TypeORM is wrong, if it's null it will set the id to null while undefined doens't.
-			return { shooter: { id: shooterId } };
-		}
-		return {};
-	}
-
 	async create(data: CreateUserArgs): Promise<User> {
 		return await this.userRepository.save(
 			{
 				name: data.name,
 				email: data.email,
 				hashedPassword: User.HashPassword(data.password),
-				...this.constructShooterJoinFromShooterId(data.shooterId),
 			},
 			{ reload: true },
 		);
@@ -55,9 +44,6 @@ export class UsersService {
 					{
 						email: data.email,
 						name: data.name,
-						...this.constructShooterJoinFromShooterId(
-							data.shooterId,
-						),
 					},
 				)
 			)?.affected || 0) > 0
@@ -69,11 +55,5 @@ export class UsersService {
 			((await this.userRepository.delete({ id: Equal(id) }))?.affected ||
 				0) > 0
 		);
-	}
-
-	async resolveShooter(id: number) {
-		return await this.shooterRepository.findOne({
-			where: { id: Equal(id) },
-		});
 	}
 }

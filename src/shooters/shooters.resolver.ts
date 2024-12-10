@@ -19,6 +19,7 @@ import { JwtAuthGuard } from "src/auth/auth.guard";
 import { CheckPolicies, PoliciesGuard } from "src/casl/policies.guard";
 import { Action } from "src/casl/casl-ability.factory/casl-ability.factory";
 import { Team } from "src/teams/team.entity";
+import { User } from "src/users/user.entity";
 
 @Resolver(() => Shooter)
 export class ShootersResolver {
@@ -65,5 +66,10 @@ export class ShootersResolver {
 	@ResolveField(() => Team, { nullable: true })
 	async team(@Parent() shooter: Shooter) {
 		return await this.shooterService.resolveTeam(shooter);
+	}
+
+	@ResolveField(() => User)
+	async owner(@Parent() shooter: Shooter) {
+		return await this.shooterService.resolveOwner(shooter);
 	}
 }

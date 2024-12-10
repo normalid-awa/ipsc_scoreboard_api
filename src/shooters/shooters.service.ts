@@ -16,9 +16,15 @@ export class ShootersService {
 	) {}
 
 	async create(newShooter: CreateShooterArgs) {
+		let owner = {};
+		if (newShooter.owner !== undefined) {
+			owner = { owner: { id: newShooter.owner } };
+		}
 		return await this.shooterRepository.save({
 			firstName: newShooter.firstName,
 			lastName: newShooter.lastName,
+			sport: newShooter.sport,
+			...owner,
 		});
 	}
 
@@ -34,6 +40,11 @@ export class ShootersService {
 	}
 
 	async update(id: number, data: UpdateShooterArgs) {
+		let owner = {};
+		if (data.owner !== undefined) {
+			owner = { owner: { id: data.owner } };
+		}
+
 		return (
 			((
 				await this.shooterRepository.update(
@@ -41,6 +52,8 @@ export class ShootersService {
 					{
 						firstName: data.firstName,
 						lastName: data.lastName,
+						sport: data.sport,
+						...owner,
 					},
 				)
 			)?.affected || 0) > 0
@@ -63,5 +76,16 @@ export class ShootersService {
 				},
 			})
 		)?.team;
+	}
+
+	async resolveOwner(shooter: Shooter) {
+		return (
+			await this.shooterRepository.findOne({
+				where: { id: Equal(shooter.id) },
+				relations: {
+					owner: true,
+				},
+			})
+		)?.owner;
 	}
 }
