@@ -2,10 +2,25 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Team {
+  id: Int!
+  name: String!
+  description: String
+  url: String
+  owner: User!
+  createdAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Shooter {
   id: Int!
   firstName: String!
   lastName: String!
+  team: Team
 }
 
 type User {
@@ -15,11 +30,6 @@ type User {
   shooter: Shooter
   createdAt: DateTime!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Stage {
   id: Int!
@@ -43,15 +53,6 @@ type PaperTarget {
   id: Int!
   name: String!
   requiredHits: Int!
-}
-
-type Team {
-  id: Int!
-  name: String!
-  description: String
-  url: String
-  owner: User!
-  createdAt: DateTime!
 }
 
 type Query {

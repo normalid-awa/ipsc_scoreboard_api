@@ -53,4 +53,15 @@ export class ShootersService {
 				.affected || 0) > 0
 		);
 	}
+
+	async resolveTeam(shooter: Shooter) {
+		return (
+			await this.shooterRepository.findOne({
+				where: { id: Equal(shooter.id) },
+				relations: {
+					team: true,
+				},
+			})
+		)?.team;
+	}
 }

@@ -1,4 +1,12 @@
-import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import {
+	Args,
+	Int,
+	Mutation,
+	Parent,
+	Query,
+	ResolveField,
+	Resolver,
+} from "@nestjs/graphql";
 import { Shooter } from "./shooter.entity";
 import { ShootersService } from "./shooters.service";
 import { NotFoundException, UseGuards } from "@nestjs/common";
@@ -10,6 +18,7 @@ import {
 import { JwtAuthGuard } from "src/auth/auth.guard";
 import { CheckPolicies, PoliciesGuard } from "src/casl/policies.guard";
 import { Action } from "src/casl/casl-ability.factory/casl-ability.factory";
+import { Team } from "src/teams/team.entity";
 
 @Resolver(() => Shooter)
 export class ShootersResolver {
@@ -51,5 +60,10 @@ export class ShootersResolver {
 	@CheckPolicies((ability) => ability.can(Action.Delete, Shooter))
 	async removeShooter(@Args("id", { type: () => Int }) id: number) {
 		return await this.shooterService.remove(id);
+	}
+
+	@ResolveField(() => Team, { nullable: true })
+	async team(@Parent() shooter: Shooter) {
+		return await this.shooterService.resolveTeam(shooter);
 	}
 }
