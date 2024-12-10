@@ -8,6 +8,7 @@ type Team {
   description: String
   url: String
   owner: User!
+  members: [Shooter!]
   createdAt: DateTime!
 }
 

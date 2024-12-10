@@ -17,6 +17,7 @@ import {
 	Action,
 	CaslAbilityFactory,
 } from "src/casl/casl-ability.factory/casl-ability.factory";
+import { Shooter } from "src/shooters/shooter.entity";
 
 @Resolver(() => Team)
 export class TeamsResolver {
@@ -77,9 +78,11 @@ export class TeamsResolver {
 
 	@ResolveField(() => User)
 	async owner(@Parent() team: Team) {
-		if (!team.owner) {
-			return null;
-		}
-		return this.teamsService.resolveOwner(team.ownerId);
+		return await this.teamsService.resolve(team.id, "owner") as User;
+	}
+
+	@ResolveField(() => [Shooter], { nullable: true })
+	async members(@Parent() team: Team) {
+		return await this.teamsService.resolve(team.id, "members") as Shooter[];
 	}
 }

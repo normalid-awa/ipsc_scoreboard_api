@@ -3,15 +3,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Team } from "./team.entity";
 import { Equal, Repository } from "typeorm";
 import { CreateTeamArgs, TeamsArgs, UpdateTeamArgs } from "./teams.dto";
-import { User } from "src/users/user.entity";
 
 @Injectable()
 export class TeamsService {
 	constructor(
 		@InjectRepository(Team)
 		private readonly teamRepository: Repository<Team>,
-		@InjectRepository(User)
-		private readonly userRepository: Repository<User>,
 	) {}
 
 	async findOneById(id: number) {
@@ -67,7 +64,13 @@ export class TeamsService {
 		);
 	}
 
-	async resolveOwner(id: number) {
-		return await this.userRepository.findOne({ where: { id: Equal(id) } });
+	async resolve<T>(id: number, relation: keyof Team): Promise<T | undefined> {
+		return (
+			await this.teamRepository.findOne({
+				where: { id: Equal(id) },
+				select: { [relation]: true },
+				relations: [relation],
+			})
+		)?.[relation] as T;
 	}
 }

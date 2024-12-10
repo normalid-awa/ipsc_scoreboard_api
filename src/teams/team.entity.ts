@@ -1,10 +1,12 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Shooter } from "src/shooters/shooter.entity";
 import { User } from "src/users/user.entity";
 import {
 	Column,
 	CreateDateColumn,
 	Entity,
 	JoinColumn,
+	OneToMany,
 	OneToOne,
 	PrimaryGeneratedColumn,
 	RelationId,
@@ -36,6 +38,10 @@ export class Team {
 
 	@RelationId((team: Team) => team.owner)
 	ownerId: number;
+
+	@Field(() => [Shooter], { nullable: true })
+	@OneToMany(() => Shooter, (shooter) => shooter.team, { nullable: true })
+	members?: Shooter[];
 
 	@CreateDateColumn()
 	@Field()
