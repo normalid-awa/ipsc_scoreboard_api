@@ -1,8 +1,11 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Shooter } from "src/shooters/shooter.entity";
 import {
 	Column,
 	CreateDateColumn,
-	Entity, PrimaryGeneratedColumn
+	Entity,
+	OneToMany,
+	PrimaryGeneratedColumn,
 } from "typeorm";
 
 @ObjectType()
@@ -27,6 +30,10 @@ export class User {
 		//TODO: Implement password hashing
 		return rawPassword;
 	}
+
+	@Field(() => [Shooter], { nullable: true })
+	@OneToMany(() => Shooter, (team) => team.owner, { nullable: true })
+	shooters?: Shooter[];
 
 	@Column({ default: false })
 	verified: boolean;

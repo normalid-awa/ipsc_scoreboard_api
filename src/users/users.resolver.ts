@@ -7,8 +7,12 @@ import { User } from "./user.entity";
 import {
 	Args,
 	Int,
-	Mutation, Query, Resolver,
-	Subscription
+	Mutation,
+	Parent,
+	Query,
+	ResolveField,
+	Resolver,
+	Subscription,
 } from "@nestjs/graphql";
 import { UsersService } from "./users.service";
 import {
@@ -23,6 +27,7 @@ import {
 	Action,
 	CaslAbilityFactory,
 } from "src/casl/casl-ability.factory/casl-ability.factory";
+import { Shooter } from "src/shooters/shooter.entity";
 
 const pubSub = new PubSub();
 
@@ -111,5 +116,10 @@ export class UsersResolver {
 	@Subscription(() => Int)
 	userRemoved() {
 		return pubSub.asyncIterableIterator(UserEvents.USER_REMOVED);
+	}
+
+	@ResolveField(() => [Shooter], { nullable: true })
+	async shooters(@Parent() user: User) {
+		return await this.usersService.resolve<Shooter[]>(user.id, "shooters");
 	}
 }

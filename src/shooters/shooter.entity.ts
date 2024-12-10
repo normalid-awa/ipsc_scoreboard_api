@@ -44,8 +44,8 @@ export class Shooter {
 
 	@RelationId((shooter: Shooter) => shooter.team)
 	teamId?: number;
-	
-	@Field({ nullable: true })
+
+	@Field(() => User, { nullable: true })
 	@ManyToOne(() => User, { nullable: true })
 	@JoinColumn()
 	owner?: User;
