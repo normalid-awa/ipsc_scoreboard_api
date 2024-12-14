@@ -11,6 +11,7 @@ import { Shooter } from "src/shooters/shooter.entity";
 import { Stage } from "src/stages/stage.entity";
 import { Club } from "src/clubs/club.entity";
 import { User } from "src/users/user.entity";
+import { Match, StuffPosition } from "src/matches/match.entity";
 
 export type Subjects =
 	| InferSubjects<typeof User>
@@ -18,6 +19,7 @@ export type Subjects =
 	| InferSubjects<typeof Club>
 	| InferSubjects<typeof File>
 	| InferSubjects<typeof Stage>
+	| InferSubjects<typeof Match>
 	| "all";
 
 export enum Action {
@@ -63,6 +65,33 @@ export class CaslAbilityFactory {
 			can<Stage>(Action.Create, Stage);
 			can<Stage>(Action.Update, Stage, { designerId: user.id });
 			can<Stage>(Action.Delete, Stage, { designerId: user.id });
+
+			can<Match>(Action.Create, Match);
+			can<Match>(Action.Update, Match, {
+				///@ts-expect-error casl lib didn't define this type of subject
+				"stuffs.position": {
+					$in: [
+						StuffPosition.CRO,
+						StuffPosition.RM,
+						StuffPosition.SO,
+						StuffPosition.MD,
+						StuffPosition.RO,
+					],
+				},
+				"stuffs.userId": user.id,
+			});
+			can<Match>(Action.Delete, Match, {
+				///@ts-expect-error casl lib didn't define this type of subject
+				"stuffs.position": {
+					$in: [
+						StuffPosition.CRO,
+						StuffPosition.RM,
+						StuffPosition.SO,
+						StuffPosition.MD,
+					],
+				},
+				"stuffs.userId": user.id,
+			});
 		}
 
 		return build({

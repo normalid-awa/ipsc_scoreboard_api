@@ -12,8 +12,11 @@ import { User } from "src/users/user.entity";
 import {
 	Column,
 	CreateDateColumn,
-	Entity, ManyToOne,
-	OneToMany, PrimaryGeneratedColumn
+	Entity,
+	ManyToOne,
+	OneToMany,
+	PrimaryGeneratedColumn,
+	RelationId,
 } from "typeorm";
 
 @ObjectType()
@@ -90,9 +93,15 @@ export class MatchStage {
 	})
 	match: Match;
 
+	@RelationId((matchStage: MatchStage) => matchStage.match)
+	matchId: number;
+
 	@Field()
 	@ManyToOne(() => Stage)
 	stage: Stage;
+
+	@RelationId((matchStage: MatchStage) => matchStage.stage)
+	stageId: number;
 }
 
 @Entity()
@@ -109,9 +118,15 @@ export class MatchShooter {
 	})
 	match: Match;
 
+	@RelationId((matchShooter: MatchShooter) => matchShooter.match)
+	matchId: number;
+
 	@Field()
 	@ManyToOne(() => Shooter)
 	shooter: Shooter;
+
+	@RelationId((matchShooter: MatchShooter) => matchShooter.shooter)
+	shooterId: number;
 }
 
 export enum StuffPosition {
@@ -141,9 +156,15 @@ export class MatchStuff {
 	})
 	match: Match;
 
+	@RelationId((matchStuff: MatchStuff) => matchStuff.match)
+	matchId: number;
+
 	@Field()
 	@ManyToOne(() => User)
 	user: User;
+
+	@RelationId((matchStuff: MatchStuff) => matchStuff.user)
+	userId: number;
 
 	@Field(() => StuffPosition)
 	@Column({ enum: StuffPosition })

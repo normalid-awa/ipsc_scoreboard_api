@@ -18,9 +18,10 @@ export class MatchesService {
 		return await this.matchRepository.find({ ...args });
 	}
 
-	async findOneById(id: number) {
+	async findOneById(id: number, relation: (keyof Match)[] = []) {
 		return await this.matchRepository.findOne({
 			where: { id: Equal(id) },
+			relations: [...relation],
 		});
 	}
 

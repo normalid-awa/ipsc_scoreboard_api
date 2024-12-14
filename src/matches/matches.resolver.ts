@@ -11,10 +11,20 @@ import { Match, MatchShooter, MatchStage, MatchStuff } from "./match.entity";
 import { Club } from "src/clubs/club.entity";
 import { MatchesService } from "./matches.service";
 import { CreateMatchArgs, MatchesArgs, UpdateMatchArgs } from "./matches.dto";
+import { UnauthorizedException, UseGuards } from "@nestjs/common";
+import { CurrentUser, JwtAuthGuard } from "src/auth/auth.guard";
+import { User } from "src/users/user.entity";
+import {
+	Action,
+	CaslAbilityFactory,
+} from "src/casl/casl-ability.factory/casl-ability.factory";
 
 @Resolver(() => Match)
 export class MatchesResolver {
-	constructor(private readonly matchesService: MatchesService) {}
+	constructor(
+		private readonly matchesService: MatchesService,
+		private readonly ability: CaslAbilityFactory,
+	) {}
 
 	@Query(() => Match)
 	async match(@Args("id", { type: () => Int }) id: number) {
@@ -27,26 +37,65 @@ export class MatchesResolver {
 	}
 
 	@Mutation(() => Match)
+	@UseGuards(JwtAuthGuard)
 	async createMatch(@Args() match: CreateMatchArgs) {
 		return this.matchesService.create(match);
 	}
 
 	@Mutation(() => Boolean)
+	@UseGuards(JwtAuthGuard)
 	async updateMatch(
 		@Args("id", { type: () => Int }) id: number,
 		@Args() match: UpdateMatchArgs,
+		@CurrentUser() user: User,
 	) {
-		return this.matchesService.update(id, match);
+		console.log(user,(await this.matchesService.findOneById(id, ["stuffs"]))!);
+		if (
+			this.ability
+				.createForUser(user)
+				.can(
+					Action.Update,
+					(await this.matchesService.findOneById(id, ["stuffs"]))!,
+				)
+		)
+			return this.matchesService.update(id, match);
+		throw new UnauthorizedException();
 	}
 
 	@Mutation(() => Boolean)
-	async removeMatch(@Args("id", { type: () => Int }) id: number) {
-		return await this.matchesService.remove(id);
+	@UseGuards(JwtAuthGuard)
+	async removeMatch(
+		@Args("id", { type: () => Int }) id: number,
+		@CurrentUser() user: User,
+	) {
+		if (
+			this.ability
+				.createForUser(user)
+				.can(
+					Action.Delete,
+					(await this.matchesService.findOneById(id, ["stuffs"]))!,
+				)
+		)
+			return await this.matchesService.remove(id);
+		throw new UnauthorizedException();
 	}
 
 	@Mutation(() => Boolean)
-	async finishMatch(@Args("id", { type: () => Int }) id: number) {
-		return await this.matchesService.finish(id);
+	@UseGuards(JwtAuthGuard)
+	async finishMatch(
+		@Args("id", { type: () => Int }) id: number,
+		@CurrentUser() user: User,
+	) {
+		if (
+			this.ability
+				.createForUser(user)
+				.can(
+					Action.Update,
+					(await this.matchesService.findOneById(id, ["stuffs"]))!,
+				)
+		)
+			return await this.matchesService.finish(id);
+		throw new UnauthorizedException();
 	}
 
 	@ResolveField(() => Club, { nullable: true })
