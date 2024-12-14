@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { Team } from "src/teams/team.entity";
+import { Club } from "src/clubs/club.entity";
 import { User } from "src/users/user.entity";
 import {
 	Column,
@@ -38,12 +38,12 @@ export class Shooter {
 	lastName: string;
 
 	@Field({ nullable: true })
-	@ManyToOne(() => Team, { nullable: true })
+	@ManyToOne(() => Club, { nullable: true })
 	@JoinColumn()
-	team?: Team;
+	club?: Club;
 
-	@RelationId((shooter: Shooter) => shooter.team)
-	teamId?: number;
+	@RelationId((shooter: Shooter) => shooter.club)
+	clubId?: number;
 
 	@Field(() => User, { nullable: true })
 	@ManyToOne(() => User, { nullable: true })

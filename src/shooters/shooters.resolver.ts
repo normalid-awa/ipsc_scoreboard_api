@@ -18,7 +18,7 @@ import {
 import { JwtAuthGuard } from "src/auth/auth.guard";
 import { CheckPolicies, PoliciesGuard } from "src/casl/policies.guard";
 import { Action } from "src/casl/casl-ability.factory/casl-ability.factory";
-import { Team } from "src/teams/team.entity";
+import { Club } from "src/clubs/club.entity";
 import { User } from "src/users/user.entity";
 
 @Resolver(() => Shooter)
@@ -63,9 +63,9 @@ export class ShootersResolver {
 		return await this.shooterService.remove(id);
 	}
 
-	@ResolveField(() => Team, { nullable: true })
-	async team(@Parent() shooter: Shooter) {
-		return await this.shooterService.resolveTeam(shooter);
+	@ResolveField(() => Club, { nullable: true })
+	async club(@Parent() shooter: Shooter) {
+		return await this.shooterService.resolveClub(shooter);
 	}
 
 	@ResolveField(() => User)

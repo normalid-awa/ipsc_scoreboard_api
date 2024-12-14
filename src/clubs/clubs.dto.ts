@@ -1,11 +1,11 @@
 import { ArgsType, Field, Int, PartialType } from "@nestjs/graphql";
-import { Team } from "./team.entity";
+import { Club } from "./club.entity";
 import { IsInt, IsOptional, IsString } from "class-validator";
 import { CreatePaginationArgs } from "src/types";
 
 @ArgsType()
-export class CreateTeamArgs
-	implements Omit<Team, "id" | "createdAt" | "owner">
+export class CreateClubArgs
+	implements Omit<Club, "id" | "createdAt" | "owner">
 {
 	@Field()
 	@IsString()
@@ -27,7 +27,7 @@ export class CreateTeamArgs
 }
 
 @ArgsType()
-export class UpdateTeamArgs extends PartialType(CreateTeamArgs) {}
+export class UpdateClubArgs extends PartialType(CreateClubArgs) {}
 
 @ArgsType()
-export class TeamsArgs extends CreatePaginationArgs() {}
+export class ClubsArgs extends CreatePaginationArgs() {}

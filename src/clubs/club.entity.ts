@@ -14,7 +14,7 @@ import {
 
 @Entity()
 @ObjectType()
-export class Team {
+export class Club {
 	@PrimaryGeneratedColumn()
 	@Field(() => Int)
 	id: number;
@@ -36,11 +36,11 @@ export class Team {
 	@Field(() => User)
 	owner: User;
 
-	@RelationId((team: Team) => team.owner)
+	@RelationId((club: Club) => club.owner)
 	ownerId: number;
 
 	@Field(() => [Shooter], { nullable: true })
-	@OneToMany(() => Shooter, (shooter) => shooter.team, { nullable: true })
+	@OneToMany(() => Shooter, (shooter) => shooter.club, { nullable: true })
 	members?: Shooter[];
 
 	@CreateDateColumn()

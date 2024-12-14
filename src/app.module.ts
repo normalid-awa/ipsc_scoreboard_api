@@ -12,9 +12,10 @@ import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { CaslModule } from "./casl/casl.module";
 import { ShootersModule } from "./shooters/shooters.module";
-import { TeamsModule } from "./teams/teams.module";
+import { ClubsModule } from "./clubs/clubs.module";
 import { StagesModule } from "./stages/stages.module";
 import { FilesModule } from "./files/files.module";
+import { MatchesModule } from './matches/matches.module';
 
 @Module({
 	imports: [
@@ -42,9 +43,10 @@ import { FilesModule } from "./files/files.module";
 		AuthModule,
 		CaslModule,
 		ShootersModule,
-		TeamsModule,
+		ClubsModule,
 		FilesModule,
 		StagesModule,
+		MatchesModule,
 	],
 })
 export class AppModule {}

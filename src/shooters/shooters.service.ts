@@ -67,15 +67,15 @@ export class ShootersService {
 		);
 	}
 
-	async resolveTeam(shooter: Shooter) {
+	async resolveClub(shooter: Shooter) {
 		return (
 			await this.shooterRepository.findOne({
 				where: { id: Equal(shooter.id) },
 				relations: {
-					team: true,
+					club: true,
 				},
 			})
-		)?.team;
+		)?.club;
 	}
 
 	async resolveOwner(shooter: Shooter) {

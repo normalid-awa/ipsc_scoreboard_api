@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Team {
+type Club {
   id: Int!
   name: String!
   description: String
@@ -21,7 +21,7 @@ type Shooter {
   id: Int!
   firstName: String!
   lastName: String!
-  team: Team
+  club: Club
   owner: User
   sport: Sport!
 }
@@ -66,6 +66,32 @@ type User {
   createdAt: DateTime!
 }
 
+type Match {
+  id: Int!
+  name: String!
+  description: String!
+  url: String
+  date: DateTime!
+  location: String!
+  finished: Boolean!
+  hostClub: Club
+  stages: [MatchStage!]!
+  shooters: [MatchShooter!]!
+  sport: Sport!
+}
+
+type MatchStage {
+  id: Int!
+  match: Match!
+  stage: Stage!
+}
+
+type MatchShooter {
+  id: Int!
+  match: Match!
+  shooter: Shooter!
+}
+
 type Query {
   user(id: Int!): User!
   users(skip: Int = 0, take: Int = 25): [User!]!
@@ -73,8 +99,8 @@ type Query {
   whoAmI: User!
   shooter(id: Int!): Shooter!
   shooters(skip: Int = 0, take: Int = 25): [Shooter!]!
-  teams(skip: Int = 0, take: Int = 25): [Team!]!
-  team(id: Int!): Team!
+  clubs(skip: Int = 0, take: Int = 25): [Club!]!
+  club(id: Int!): Club!
   stages(skip: Int = 0, take: Int = 25): [Stage!]!
   stage(id: Int!): Stage!
 }
@@ -86,9 +112,9 @@ type Mutation {
   createShooter(firstName: String!, lastName: String!, owner: Int, sport: Sport!): Shooter!
   updateShooter(id: Int!, firstName: String, lastName: String, owner: Int, sport: Sport): Boolean!
   removeShooter(id: Int!): Boolean!
-  createTeam(name: String!, description: String, url: String, ownerId: Int!): Team!
-  updateTeam(id: Int!, name: String, description: String, url: String, ownerId: Int): Boolean!
-  removeTeam(id: Int!): Boolean!
+  createClub(name: String!, description: String, url: String, ownerId: Int!): Club!
+  updateClub(id: Int!, name: String, description: String, url: String, ownerId: Int): Boolean!
+  removeClub(id: Int!): Boolean!
   createStage(name: String!, briefing: String!, attachments: [String!]!, designer: Int!, noShooots: Int!, paperTargets: [CreateStagePaperTargetInput!]!, popper: Int!, walkthroughTime: Float!): Stage!
   updateStage(id: Int!, name: String, briefing: String, attachments: [String!], designer: Int, noShooots: Int, paperTargets: [CreateStagePaperTargetInput!], popper: Int, walkthroughTime: Float): Boolean!
   removeStage(id: Int!): Boolean!

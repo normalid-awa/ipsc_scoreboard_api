@@ -7,9 +7,9 @@ import {
 	ResolveField,
 	Resolver,
 } from "@nestjs/graphql";
-import { TeamsService } from "./teams.service";
-import { CreateTeamArgs, TeamsArgs, UpdateTeamArgs } from "./teams.dto";
-import { Team } from "./team.entity";
+import { ClubsService } from "./clubs.service";
+import { CreateClubArgs, ClubsArgs, UpdateClubArgs } from "./clubs.dto";
+import { Club } from "./club.entity";
 import { User } from "src/users/user.entity";
 import { UnauthorizedException, UseGuards } from "@nestjs/common";
 import { CurrentUser, JwtAuthGuard } from "src/auth/auth.guard";
@@ -19,70 +19,70 @@ import {
 } from "src/casl/casl-ability.factory/casl-ability.factory";
 import { Shooter } from "src/shooters/shooter.entity";
 
-@Resolver(() => Team)
-export class TeamsResolver {
+@Resolver(() => Club)
+export class ClubsResolver {
 	constructor(
-		private readonly teamsService: TeamsService,
+		private readonly clubsServices: ClubsService,
 		private readonly ability: CaslAbilityFactory,
 	) {}
 
-	@Query(() => [Team])
-	async teams(@Args() pagination: TeamsArgs) {
-		return await this.teamsService.findAll(pagination);
+	@Query(() => [Club])
+	async clubs(@Args() pagination: ClubsArgs) {
+		return await this.clubsServices.findAll(pagination);
 	}
 
-	@Query(() => Team)
-	async team(@Args("id", { type: () => Int }) id: number) {
-		return await this.teamsService.findOneById(id);
+	@Query(() => Club)
+	async club(@Args("id", { type: () => Int }) id: number) {
+		return await this.clubsServices.findOneById(id);
 	}
 
-	@Mutation(() => Team)
-	async createTeam(@Args() data: CreateTeamArgs) {
-		return await this.teamsService.create(data);
+	@Mutation(() => Club)
+	async createClub(@Args() data: CreateClubArgs) {
+		return await this.clubsServices.create(data);
 	}
 
 	@Mutation(() => Boolean)
 	@UseGuards(JwtAuthGuard)
-	async updateTeam(
+	async updateClub(
 		@Args("id", { type: () => Int }) id: number,
-		@Args() data: UpdateTeamArgs,
+		@Args() data: UpdateClubArgs,
 		@CurrentUser() user: User,
 	) {
 		if (
 			!(await this.ability.validateUserAbility(
 				user,
-				async () => await this.teamsService.findOneById(id),
+				async () => await this.clubsServices.findOneById(id),
 				Action.Update,
 			))
 		)
 			throw new UnauthorizedException();
-		return await this.teamsService.update(id, data);
+		return await this.clubsServices.update(id, data);
 	}
 
 	@Mutation(() => Boolean)
 	@UseGuards(JwtAuthGuard)
-	async removeTeam(
+	async removeClub(
 		@Args("id", { type: () => Int }) id: number,
 		@CurrentUser() user: User,
 	) {
 		if (
 			!(await this.ability.validateUserAbility(
 				user,
-				async () => await this.teamsService.findOneById(id),
+				async () => await this.clubsServices.findOneById(id),
 				Action.Delete,
 			))
 		)
 			throw new UnauthorizedException();
-		return await this.teamsService.remove(id);
+		return await this.clubsServices.remove(id);
 	}
 
 	@ResolveField(() => User)
-	async owner(@Parent() team: Team) {
-		return await this.teamsService.resolve(team.id, "owner") as User;
+	async owner(@Parent() club: Club) {
+		return await this.clubsServices.resolve(club.id, "owner") as User;
 	}
 
 	@ResolveField(() => [Shooter], { nullable: true })
-	async members(@Parent() team: Team) {
-		return await this.teamsService.resolve(team.id, "members") as Shooter[];
+	async members(@Parent() club: Club) {
+		return await this.clubsServices.resolve(club.id, "members") as Shooter[];
 	}
 }

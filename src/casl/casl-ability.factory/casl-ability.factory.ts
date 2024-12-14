@@ -9,13 +9,13 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { File } from "src/files/file.entity";
 import { Shooter } from "src/shooters/shooter.entity";
 import { Stage } from "src/stages/stage.entity";
-import { Team } from "src/teams/team.entity";
+import { Club } from "src/clubs/club.entity";
 import { User } from "src/users/user.entity";
 
 export type Subjects =
 	| InferSubjects<typeof User>
 	| InferSubjects<typeof Shooter>
-	| InferSubjects<typeof Team>
+	| InferSubjects<typeof Club>
 	| InferSubjects<typeof File>
 	| InferSubjects<typeof Stage>
 	| "all";
@@ -52,9 +52,9 @@ export class CaslAbilityFactory {
 			can<Shooter>(Action.Update, Shooter);
 			can<Shooter>(Action.Delete, Shooter);
 
-			can<Team>(Action.Create, Team);
-			can<Team>(Action.Update, Team, { ownerId: user.id });
-			can<Team>(Action.Delete, Team, { ownerId: user.id });
+			can<Club>(Action.Create, Club);
+			can<Club>(Action.Update, Club, { ownerId: user.id });
+			can<Club>(Action.Delete, Club, { ownerId: user.id });
 
 			can<File>(Action.Create, File);
 			can<File>(Action.Update, File, { ownerId: user.id });

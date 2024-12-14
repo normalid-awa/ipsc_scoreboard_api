@@ -1,29 +1,29 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Team } from "./team.entity";
+import { Club } from "./club.entity";
 import { Equal, Repository } from "typeorm";
-import { CreateTeamArgs, TeamsArgs, UpdateTeamArgs } from "./teams.dto";
+import { CreateClubArgs, ClubsArgs, UpdateClubArgs } from "./clubs.dto";
 
 @Injectable()
-export class TeamsService {
+export class ClubsService {
 	constructor(
-		@InjectRepository(Team)
-		private readonly teamRepository: Repository<Team>,
+		@InjectRepository(Club)
+		private readonly clubRepository: Repository<Club>,
 	) {}
 
 	async findOneById(id: number) {
-		return await this.teamRepository.findOne({ where: { id: Equal(id) } });
+		return await this.clubRepository.findOne({ where: { id: Equal(id) } });
 	}
 
-	async findAll(pagination: TeamsArgs) {
-		return await this.teamRepository.find({
+	async findAll(pagination: ClubsArgs) {
+		return await this.clubRepository.find({
 			skip: pagination.skip,
 			take: pagination.take,
 		});
 	}
 
-	async create(data: CreateTeamArgs) {
-		return await this.teamRepository.save(
+	async create(data: CreateClubArgs) {
+		return await this.clubRepository.save(
 			{
 				name: data.name,
 				description: data.description,
@@ -36,7 +36,7 @@ export class TeamsService {
 		);
 	}
 
-	async update(id: number, data: UpdateTeamArgs) {
+	async update(id: number, data: UpdateClubArgs) {
 		let ownerParam = {};
 		if (data.ownerId !== undefined) {
 			ownerParam = { owner: { id: data.ownerId } };
@@ -44,7 +44,7 @@ export class TeamsService {
 
 		return (
 			((
-				await this.teamRepository.update(
+				await this.clubRepository.update(
 					{ id: Equal(id) },
 					{
 						description: data.description,
@@ -59,14 +59,14 @@ export class TeamsService {
 
 	async remove(id: number) {
 		return (
-			((await this.teamRepository.delete({ id: Equal(id) }))?.affected ||
+			((await this.clubRepository.delete({ id: Equal(id) }))?.affected ||
 				0) > 0
 		);
 	}
 
-	async resolve<T>(id: number, relation: keyof Team): Promise<T | undefined> {
+	async resolve<T>(id: number, relation: keyof Club): Promise<T | undefined> {
 		return (
-			await this.teamRepository.findOne({
+			await this.clubRepository.findOne({
 				where: { id: Equal(id) },
 				select: { [relation]: true },
 				relations: [relation],

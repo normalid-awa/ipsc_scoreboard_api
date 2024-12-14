@@ -33,7 +33,7 @@ export class User {
 	}
 
 	@Field(() => [Shooter], { nullable: true })
-	@OneToMany(() => Shooter, (team) => team.owner, { nullable: true })
+	@OneToMany(() => Shooter, (shooter) => shooter.owner, { nullable: true })
 	shooters?: Shooter[];
 
 	@Field(() => [Stage], { nullable: true })
