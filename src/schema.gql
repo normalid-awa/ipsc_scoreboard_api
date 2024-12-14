@@ -72,11 +72,11 @@ type Match {
   description: String!
   url: String
   date: DateTime!
-  location: String!
   finished: Boolean!
   hostClub: Club
   stages: [MatchStage!]!
   shooters: [MatchShooter!]!
+  stuffs: [MatchStuff!]!
   sport: Sport!
 }
 
@@ -92,6 +92,22 @@ type MatchShooter {
   shooter: Shooter!
 }
 
+type MatchStuff {
+  id: Int!
+  match: Match!
+  user: User!
+  position: StuffPosition!
+}
+
+enum StuffPosition {
+  RO
+  CRO
+  SO
+  QM
+  RM
+  MD
+}
+
 type Query {
   user(id: Int!): User!
   users(skip: Int = 0, take: Int = 25): [User!]!
@@ -103,6 +119,8 @@ type Query {
   club(id: Int!): Club!
   stages(skip: Int = 0, take: Int = 25): [Stage!]!
   stage(id: Int!): Stage!
+  match(id: Int!): Match!
+  matches(skip: Int = 0, take: Int = 25): [Match!]!
 }
 
 type Mutation {
@@ -118,11 +136,20 @@ type Mutation {
   createStage(name: String!, briefing: String!, attachments: [String!]!, designer: Int!, noShooots: Int!, paperTargets: [CreateStagePaperTargetInput!]!, popper: Int!, walkthroughTime: Float!): Stage!
   updateStage(id: Int!, name: String, briefing: String, attachments: [String!], designer: Int, noShooots: Int, paperTargets: [CreateStagePaperTargetInput!], popper: Int, walkthroughTime: Float): Boolean!
   removeStage(id: Int!): Boolean!
+  createMatch(url: String!, date: DateTime!, sport: Sport!, name: String!, description: String!, hostClub: Int, stages: [Int!]!, shooters: [Int!]!, stuffs: [CreateMatchStuffInput!]!): Match!
+  updateMatch(id: Int!, url: String, date: DateTime, sport: Sport, name: String, description: String, hostClub: Int, stages: [Int!], shooters: [Int!], stuffs: [CreateMatchStuffInput!]): Boolean!
+  removeMatch(id: Int!): Boolean!
+  finishMatch(id: Int!): Boolean!
 }
 
 input CreateStagePaperTargetInput {
   name: String!
   requiredHits: Int!
+}
+
+input CreateMatchStuffInput {
+  user: Int!
+  position: StuffPosition!
 }
 
 type Subscription {
