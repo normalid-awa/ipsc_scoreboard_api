@@ -54,10 +54,10 @@ export class Match {
 	})
 	shooters: MatchShooter[];
 
-	@OneToMany(() => MatchStuff, (matchStuff) => matchStuff.match, {
+	@OneToMany(() => MatchStaff, (matchStuff) => matchStuff.match, {
 		cascade: true,
 	})
-	stuffs: MatchStuff[];
+	staffs: MatchStaff[];
 
 	@OneToMany(() => MatchClassification, (matchClassification) => matchClassification.match, {
 		cascade: true,
@@ -168,7 +168,7 @@ export class MatchShooter {
 	divisionId: number;
 }
 
-export enum StuffPosition {
+export enum StaffPosition {
 	RO = "RO",
 	CRO = "CRO",
 	SO = "SO",
@@ -177,12 +177,12 @@ export enum StuffPosition {
 	MD = "MD",
 }
 
-registerEnumType(StuffPosition, {
-	name: "StuffPosition",
+registerEnumType(StaffPosition, {
+	name: "StaffPosition",
 });
 
 @Entity()
-export class MatchStuff {
+export class MatchStaff {
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -192,15 +192,15 @@ export class MatchStuff {
 	})
 	match: Match;
 
-	@RelationId((matchStuff: MatchStuff) => matchStuff.match)
+	@RelationId((matchStuff: MatchStaff) => matchStuff.match)
 	matchId: number;
 
 	@ManyToOne(() => User)
 	user: User;
 
-	@RelationId((matchStuff: MatchStuff) => matchStuff.user)
+	@RelationId((matchStuff: MatchStaff) => matchStuff.user)
 	userId: number;
 
-	@Column({ enum: StuffPosition })
-	position: StuffPosition;
+	@Column({ enum: StaffPosition })
+	position: StaffPosition;
 }

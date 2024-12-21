@@ -11,7 +11,7 @@ import { Shooter } from "src/shooters/shooter.entity";
 import { Stage } from "src/stages/stage.entity";
 import { Club } from "src/clubs/club.entity";
 import { User } from "src/users/user.entity";
-import { Match, StuffPosition } from "src/matches/match.entity";
+import { Match, StaffPosition } from "src/matches/match.entity";
 
 export type Subjects =
 	| InferSubjects<typeof User>
@@ -71,11 +71,11 @@ export class CaslAbilityFactory {
 				///@ts-expect-error casl lib didn't define this type of subject
 				"stuffs.position": {
 					$in: [
-						StuffPosition.CRO,
-						StuffPosition.RM,
-						StuffPosition.SO,
-						StuffPosition.MD,
-						StuffPosition.RO,
+						StaffPosition.CRO,
+						StaffPosition.RM,
+						StaffPosition.SO,
+						StaffPosition.MD,
+						StaffPosition.RO,
 					],
 				},
 				"stuffs.userId": user.id,
@@ -84,10 +84,10 @@ export class CaslAbilityFactory {
 				///@ts-expect-error casl lib didn't define this type of subject
 				"stuffs.position": {
 					$in: [
-						StuffPosition.CRO,
-						StuffPosition.RM,
-						StuffPosition.SO,
-						StuffPosition.MD,
+						StaffPosition.CRO,
+						StaffPosition.RM,
+						StaffPosition.SO,
+						StaffPosition.MD,
 					],
 				},
 				"stuffs.userId": user.id,
