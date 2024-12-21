@@ -1,4 +1,7 @@
-import { ExtractJwt, Strategy } from "passport-jwt";
+//TODO: remove ts ignore
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+// @ts-ignoremport { ExtractJwt, Strategy } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable } from "@nestjs/common";
 import securityConfig from "config/security.config";

@@ -1,3 +1,7 @@
+//TODO: remove ts ignore
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+// @ts-ignore
 import { Module } from "@nestjs/common";
 import { AuthResolver } from "./auth.resolver";
 import { AuthService } from "./auth.service";

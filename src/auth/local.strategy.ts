@@ -1,4 +1,7 @@
-import { IStrategyOptions, Strategy } from "passport-local";
+//TODO: remove ts ignore
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+// @ts-ignoremport { IStrategyOptions, Strategy } from "passport-local";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable } from "@nestjs/common";
 import { AuthService } from "./auth.service";

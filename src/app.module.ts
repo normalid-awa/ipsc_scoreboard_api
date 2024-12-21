@@ -15,7 +15,7 @@ import { ShootersModule } from "./shooters/shooters.module";
 import { ClubsModule } from "./clubs/clubs.module";
 import { StagesModule } from "./stages/stages.module";
 import { FilesModule } from "./files/files.module";
-import { MatchesModule } from './matches/matches.module';
+import { MatchesModule } from "./matches/matches.module";
 
 @Module({
 	imports: [
@@ -40,8 +40,8 @@ import { MatchesModule } from './matches/matches.module';
 		}),
 		PassportModule.register({ session: true }),
 		UsersModule,
-		AuthModule,
-		CaslModule,
+		// AuthModule,
+		// CaslModule,
 		ShootersModule,
 		ClubsModule,
 		FilesModule,

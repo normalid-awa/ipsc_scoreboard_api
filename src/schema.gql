@@ -21,8 +21,6 @@ type Shooter {
   id: Int!
   firstName: String!
   lastName: String!
-  club: Club
-  owner: User
   sport: Sport!
 }
 
@@ -126,13 +124,75 @@ enum StuffPosition {
   MD
 }
 
+type DeleteManyResponse {
+  """The number of records deleted."""
+  deletedCount: Int!
+}
+
+type ShooterDeleteResponse {
+  id: Int
+  firstName: String
+  lastName: String
+  sport: Sport
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+type ShooterEdge {
+  """The node containing the Shooter"""
+  node: Shooter!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+type PageInfo {
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+}
+
+type ShooterConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [ShooterEdge!]!
+}
+
 type Query {
   user(id: Int!): User!
   users(skip: Int = 0, take: Int = 25): [User!]!
   login(email: String!, password: String!): String!
   whoAmI: User!
-  shooter(id: Int!): Shooter!
-  shooters(skip: Int = 0, take: Int = 25): [Shooter!]!
+  shooter(
+    """The id of the record to find."""
+    id: Int!
+  ): Shooter!
+  shooters(
+    """Limit or page results."""
+    paging: CursorPaging! = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: ShooterFilter! = {}
+
+    """Specify to sort results."""
+    sorting: [ShooterSort!]! = []
+  ): ShooterConnection!
   clubs(skip: Int = 0, take: Int = 25): [Club!]!
   club(id: Int!): Club!
   stages(skip: Int = 0, take: Int = 25): [Stage!]!
@@ -141,13 +201,78 @@ type Query {
   matches(skip: Int = 0, take: Int = 25): [Match!]!
 }
 
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input ShooterFilter {
+  and: [ShooterFilter!]
+  or: [ShooterFilter!]
+  id: IntFieldComparison
+}
+
+input IntFieldComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: Int
+  neq: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+  in: [Int!]
+  notIn: [Int!]
+  between: IntFieldComparisonBetween
+  notBetween: IntFieldComparisonBetween
+}
+
+input IntFieldComparisonBetween {
+  lower: Int!
+  upper: Int!
+}
+
+input ShooterSort {
+  field: ShooterSortFields!
+  direction: SortDirection!
+  nulls: SortNulls
+}
+
+enum ShooterSortFields {
+  id
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
 type Mutation {
   createUser(name: String!, email: String!, password: String!): User!
   updateUser(id: Int!, name: String, email: String): Boolean!
   removeUser(id: Int!): Boolean!
-  createShooter(firstName: String!, lastName: String!, owner: Int, sport: Sport!): Shooter!
-  updateShooter(id: Int!, firstName: String, lastName: String, owner: Int, sport: Sport): Boolean!
-  removeShooter(id: Int!): Boolean!
+  createOneShooter(input: CreateOneShooterInput!): Shooter!
+  createManyShooters(input: CreateManyShootersInput!): [Shooter!]!
+  updateOneShooter(input: UpdateOneShooterInput!): Shooter!
+  updateManyShooters(input: UpdateManyShootersInput!): UpdateManyResponse!
+  deleteOneShooter(input: DeleteOneShooterInput!): ShooterDeleteResponse!
+  deleteManyShooters(input: DeleteManyShootersInput!): DeleteManyResponse!
   createClub(name: String!, description: String, url: String, ownerId: Int!): Club!
   updateClub(id: Int!, name: String, description: String, url: String, ownerId: Int): Boolean!
   removeClub(id: Int!): Boolean!
@@ -158,6 +283,68 @@ type Mutation {
   updateMatch(id: Int!, url: String, date: DateTime, sport: Sport, name: String, description: String, hostClub: Int, isPublic: Boolean, stages: [Int!], shooters: [Int!], stuffs: [CreateMatchStuffInput!], classifications: [String!], divisions: [String!]): Boolean!
   removeMatch(id: Int!): Boolean!
   finishMatch(id: Int!): Boolean!
+}
+
+input CreateOneShooterInput {
+  """The record to create"""
+  shooter: CreateShooter!
+}
+
+input CreateShooter {
+  id: Int!
+  firstName: String!
+  lastName: String!
+  sport: Sport!
+}
+
+input CreateManyShootersInput {
+  """Array of records to create"""
+  shooters: [CreateShooter!]!
+}
+
+input UpdateOneShooterInput {
+  """The id of the record to update"""
+  id: Int!
+
+  """The update to apply."""
+  update: UpdateShooter!
+}
+
+input UpdateShooter {
+  id: Int
+  firstName: String
+  lastName: String
+  sport: Sport
+}
+
+input UpdateManyShootersInput {
+  """Filter used to find fields to update"""
+  filter: ShooterUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateShooter!
+}
+
+input ShooterUpdateFilter {
+  and: [ShooterUpdateFilter!]
+  or: [ShooterUpdateFilter!]
+  id: IntFieldComparison
+}
+
+input DeleteOneShooterInput {
+  """The id of the record to delete."""
+  id: Int!
+}
+
+input DeleteManyShootersInput {
+  """Filter to find records to delete"""
+  filter: ShooterDeleteFilter!
+}
+
+input ShooterDeleteFilter {
+  and: [ShooterDeleteFilter!]
+  or: [ShooterDeleteFilter!]
+  id: IntFieldComparison
 }
 
 input CreateStagePaperTargetInput {
