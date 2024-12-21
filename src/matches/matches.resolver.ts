@@ -7,7 +7,14 @@ import {
 	ResolveField,
 	Resolver,
 } from "@nestjs/graphql";
-import { Match, MatchShooter, MatchStage, MatchStuff } from "./match.entity";
+import {
+	Match,
+	MatchClassification,
+	MatchDivision,
+	MatchShooter,
+	MatchStage,
+	MatchStuff,
+} from "./match.entity";
 import { Club } from "src/clubs/club.entity";
 import { MatchesService } from "./matches.service";
 import { CreateMatchArgs, MatchesArgs, UpdateMatchArgs } from "./matches.dto";
@@ -123,6 +130,22 @@ export class MatchesResolver {
 		return await this.matchesService.resolve<MatchStuff>(
 			match.id,
 			"stuffs",
+		);
+	}
+
+	@ResolveField(() => [MatchDivision])
+	async divisions(@Parent() match: Match) {
+		return await this.matchesService.resolve<MatchDivision>(
+			match.id,
+			"divisions",
+		);
+	}
+	
+	@ResolveField(() => [MatchClassification])
+	async classifications(@Parent() match: Match) {
+		return await this.matchesService.resolve<MatchClassification>(
+			match.id,
+			"classifications",
 		);
 	}
 }

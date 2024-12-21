@@ -78,6 +78,8 @@ type Match {
   stages: [MatchStage!]!
   shooters: [MatchShooter!]!
   stuffs: [MatchStuff!]!
+  classifications: [MatchClassification!]!
+  divisions: [MatchDivision!]!
   sport: Sport!
   createdAt: DateTime!
 }
@@ -88,10 +90,24 @@ type MatchStage {
   stage: Stage!
 }
 
+type MatchClassification {
+  id: Int!
+  match: Match!
+  classification: String!
+}
+
+type MatchDivision {
+  id: Int!
+  match: Match!
+  division: String!
+}
+
 type MatchShooter {
   id: Int!
   match: Match!
   shooter: Shooter!
+  classification: MatchClassification!
+  division: MatchDivision!
 }
 
 type MatchStuff {
@@ -138,8 +154,8 @@ type Mutation {
   createStage(name: String!, briefing: String!, attachments: [String!]!, designer: Int!, noShooots: Int!, paperTargets: [CreateStagePaperTargetInput!]!, popper: Int!, walkthroughTime: Float!): Stage!
   updateStage(id: Int!, name: String, briefing: String, attachments: [String!], designer: Int, noShooots: Int, paperTargets: [CreateStagePaperTargetInput!], popper: Int, walkthroughTime: Float): Boolean!
   removeStage(id: Int!): Boolean!
-  createMatch(url: String!, date: DateTime!, sport: Sport!, name: String!, description: String!, hostClub: Int, isPublic: Boolean!, stages: [Int!]!, shooters: [Int!]!, stuffs: [CreateMatchStuffInput!]!): Match!
-  updateMatch(id: Int!, url: String, date: DateTime, sport: Sport, name: String, description: String, hostClub: Int, isPublic: Boolean, stages: [Int!], shooters: [Int!], stuffs: [CreateMatchStuffInput!]): Boolean!
+  createMatch(url: String!, date: DateTime!, sport: Sport!, name: String!, description: String!, hostClub: Int, isPublic: Boolean!, stages: [Int!]!, shooters: [Int!]!, stuffs: [CreateMatchStuffInput!]!, classifications: [String!]!, divisions: [String!]!): Match!
+  updateMatch(id: Int!, url: String, date: DateTime, sport: Sport, name: String, description: String, hostClub: Int, isPublic: Boolean, stages: [Int!], shooters: [Int!], stuffs: [CreateMatchStuffInput!], classifications: [String!], divisions: [String!]): Boolean!
   removeMatch(id: Int!): Boolean!
   finishMatch(id: Int!): Boolean!
 }

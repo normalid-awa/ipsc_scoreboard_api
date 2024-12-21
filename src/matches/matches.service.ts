@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Equal, Repository } from "typeorm";
-import { Match, MatchShooter, MatchStage, MatchStuff } from "./match.entity";
+import { Match, MatchClassification, MatchDivision, MatchShooter, MatchStage, MatchStuff } from "./match.entity";
 import { CreateMatchArgs, MatchesArgs, UpdateMatchArgs } from "./matches.dto";
 import { Stage } from "src/stages/stage.entity";
 import { Shooter } from "src/shooters/shooter.entity";
@@ -50,6 +50,18 @@ export class MatchesService {
 			return newStuff;
 		});
 
+		const divisions = match.divisions.map((division) => {
+			const newDivision = new MatchDivision();
+			newDivision.division = division;
+			return newDivision;
+		});
+
+		const classifications = match.classifications.map((classification) => {
+			const newClassification = new MatchClassification();
+			newClassification.classification = classification;
+			return newClassification;
+		});
+
 		const newMatch = this.matchRepository.create({
 			name: match.name,
 			description: match.description,
@@ -61,6 +73,8 @@ export class MatchesService {
 			stages: stages,
 			shooters: shooters,
 			stuffs: stuffs,
+			divisions: divisions,
+			classifications: classifications,
 		});
 		return await this.matchRepository.save(newMatch);
 	}
@@ -110,6 +124,28 @@ export class MatchesService {
 			};
 		}
 
+		let classifications = {};
+		if (match.classifications !== undefined) {
+			classifications = {
+				classifications: (match.classifications || []).map((classification) => {
+					const newClassification = new MatchClassification();
+					newClassification.classification = classification;
+					return newClassification;
+				}),
+			};
+		}
+
+		let divisions = {};
+		if (match.divisions !== undefined) {
+			divisions = {
+				divisions: (match.divisions || []).map((division) => {
+					const newDivision = new MatchDivision();
+					newDivision.division = division;
+					return newDivision;
+				}),
+			};
+		}
+
 		return new Boolean(
 			await this.matchRepository.save({
 				id,
@@ -122,6 +158,8 @@ export class MatchesService {
 				...stages,
 				...shooters,
 				...stuffs,
+				...classifications,
+				...divisions,
 			}),
 		);
 	}

@@ -1,10 +1,4 @@
-import {
-	Field,
-	GraphQLISODateTime,
-	Int,
-	ObjectType,
-	registerEnumType,
-} from "@nestjs/graphql";
+import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { Club } from "src/clubs/club.entity";
 import { Shooter, Sport } from "src/shooters/shooter.entity";
 import { Stage } from "src/stages/stage.entity";
@@ -78,6 +72,18 @@ export class Match {
 	})
 	stuffs: MatchStuff[];
 
+	@Field(() => [MatchClassification])
+	@OneToMany(() => MatchClassification, (matchClassification) => matchClassification.match, {
+		cascade: true,
+	})
+	classifications: MatchClassification[];
+
+	@Field(() => [MatchDivision])
+	@OneToMany(() => MatchDivision, (matchDivision) => matchDivision.match, {
+		cascade: true,
+	})
+	divisions: MatchDivision[];
+
 	@Field(() => Sport)
 	@Column({ enum: Sport })
 	sport: Sport;
@@ -114,7 +120,7 @@ export class MatchStage {
 
 @Entity()
 @ObjectType()
-export class MatchShooter {
+export class MatchClassification {
 	@Field(() => Int)
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -126,15 +132,75 @@ export class MatchShooter {
 	})
 	match: Match;
 
-	@RelationId((matchShooter: MatchShooter) => matchShooter.match)
+	@RelationId(
+		(matchClassification: MatchClassification) => matchClassification.match,
+	)
 	matchId: number;
 
 	@Field()
+	@Column()
+	classification: string;
+}
+
+@Entity()
+@ObjectType()
+export class MatchDivision {
+	@Field(() => Int)
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@Field()
+	@ManyToOne(() => Match, {
+		onDelete: "CASCADE",
+		orphanedRowAction: "delete",
+	})
+	match: Match;
+
+	@RelationId((matchDivision: MatchDivision) => matchDivision.match)
+	matchId: number;
+
+	@Field()
+	@Column()
+	division: string;
+}
+
+@Entity()
+@ObjectType()
+export class MatchShooter {
+	@Field(() => Int)
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@Field()
+	@ManyToOne(() => Match, {
+		onDelete: "CASCADE",
+		orphanedRowAction: "delete",
+	})
+	match: Match;
+	
+	@RelationId((matchShooter: MatchShooter) => matchShooter.match)
+	matchId: number;
+	
+	@Field()
 	@ManyToOne(() => Shooter)
 	shooter: Shooter;
-
+	
 	@RelationId((matchShooter: MatchShooter) => matchShooter.shooter)
 	shooterId: number;
+	
+	@Field()
+	@ManyToOne(() => MatchClassification)
+	classification: MatchClassification;
+	
+	@RelationId((matchShooter: MatchShooter) => matchShooter.classification)
+	classificationId: number;
+	
+	@Field()
+	@ManyToOne(() => MatchDivision)
+	division: MatchDivision;
+	
+	@RelationId((matchShooter: MatchShooter) => matchShooter.division)
+	divisionId: number;
 }
 
 export enum StuffPosition {

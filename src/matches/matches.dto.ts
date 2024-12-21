@@ -74,6 +74,12 @@ export class CreateMatchArgs
 
 	@Field(() => [CreateMatchStuffInput])
 	stuffs: CreateMatchStuffInput[];
+
+	@Field(() => [String])
+	classifications: string[];
+
+	@Field(() => [String])
+	divisions: string[];
 }
 
 @ArgsType()
