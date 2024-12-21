@@ -38,8 +38,8 @@ export class Match {
 	@Column({ nullable: true })
 	url: string;
 
-	@Field(() => GraphQLISODateTime)
-	@Column("date")
+	@Field()
+	@Column()
 	date: Date;
 
 	@Field()
@@ -52,6 +52,13 @@ export class Match {
 		cascade: true,
 	})
 	hostClub?: Club;
+
+	//**
+	// If it's not public, it will only be visible to the host club
+	//  */
+	@Field()
+	@Column({ default: false })
+	isPublic: boolean;
 
 	@Field(() => [MatchStage])
 	@OneToMany(() => MatchStage, (matchStage) => matchStage.match, {
@@ -75,6 +82,7 @@ export class Match {
 	@Column({ enum: Sport })
 	sport: Sport;
 
+	@Field()
 	@CreateDateColumn()
 	createdAt: Date;
 }

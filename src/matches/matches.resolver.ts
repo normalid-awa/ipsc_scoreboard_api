@@ -49,7 +49,6 @@ export class MatchesResolver {
 		@Args() match: UpdateMatchArgs,
 		@CurrentUser() user: User,
 	) {
-		console.log(user,(await this.matchesService.findOneById(id, ["stuffs"]))!);
 		if (
 			this.ability
 				.createForUser(user)

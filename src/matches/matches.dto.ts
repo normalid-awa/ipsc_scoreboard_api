@@ -9,10 +9,12 @@ import {
 import { Match, StuffPosition } from "./match.entity";
 import { Sport } from "src/shooters/shooter.entity";
 import {
-	IsDate, IsEnum,
+	IsBoolean,
+	IsDate,
+	IsEnum,
 	IsInt,
 	IsOptional,
-	IsUrl
+	IsUrl,
 } from "class-validator";
 import { CreatePaginationArgs } from "src/types";
 
@@ -32,7 +34,7 @@ export class CreateMatchArgs
 	implements
 		Pick<
 			Match,
-			"name" | "description" | "url" | "date" | "sport"
+			"name" | "description" | "url" | "date" | "sport" | "isPublic"
 		>
 {
 	@Field()
@@ -57,6 +59,10 @@ export class CreateMatchArgs
 	@IsOptional()
 	@IsInt()
 	hostClub?: number;
+
+	@Field()
+	@IsBoolean()
+	isPublic: boolean;
 
 	@Field(() => [Int])
 	@IsInt({ each: true })

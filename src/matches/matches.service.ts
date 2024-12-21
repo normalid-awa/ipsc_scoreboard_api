@@ -57,6 +57,7 @@ export class MatchesService {
 			date: match.date,
 			sport: match.sport,
 			...hostClub,
+			isPublic: match.isPublic,
 			stages: stages,
 			shooters: shooters,
 			stuffs: stuffs,
